@@ -1,0 +1,471 @@
+.GUIArea{
+	box-sizing: border-box;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+}
+.GUIArea .GUIWindow{
+	box-sizing: border-box;
+	position: absolute;
+}
+
+.GUIArea .GUIWindow#frame{
+	animation: fadeIn 0.5s ease 0s 1 normal;
+	box-shadow: 10px 10px 10px rgba(0,0,0,0.4);
+	border-radius: 10px 10px 0px 0px;
+	border: 1px solid rgba(0,0,0,0.8);
+}
+
+@keyframes fadeIn {
+    0% {opacity: 0;transform: scale(0.0);}
+    100% {opacity: 1;transform: scale(1.0);}
+}
+
+.GUIArea .GUIWindow .GUIFrame{
+	display: none;
+}
+.GUIArea .GUIWindow#frame > .GUIFrame{
+	display: block;
+}
+
+.GUIArea .GUIWindow .GUIBorderLeft{
+	position: absolute;
+	left: -10px;
+	width: 10px;
+	height: 100%;
+	cursor: w-resize;
+}
+.GUIArea .GUIWindow .GUIBorderRight{
+	position: absolute;
+	left: 100%;
+	width: 10px;
+	height: 100%;
+	cursor: e-resize;
+}
+.GUIArea .GUIWindow .GUIBorderTop{
+	position: absolute;
+	top: -10px;
+	width: 100%;
+	height: 10px;
+	cursor: n-resize;
+}
+.GUIArea .GUIWindow .GUIBorderBottom{
+	position: absolute;
+	top: 100%;
+	width: 100%;
+	height: 10px;
+	cursor: s-resize;
+}
+.GUIArea .GUIWindow .GUIBorderTopLeft{
+	position: absolute;
+	top: -10px;
+	left: -10px;
+	width: 10px;
+	height: 10px;
+	cursor: nw-resize;
+}
+.GUIArea .GUIWindow .GUIBorderTopRight{
+	position: absolute;
+	top: -10px;
+	left: 100%;
+	width: 10px;
+	height: 10px;
+	cursor: ne-resize;
+}
+.GUIArea .GUIWindow .GUIBorderBottomLeft{
+	position: absolute;
+	top: 100%;
+	left: -10px;
+	width: 10px;
+	height: 10px;
+	cursor: sw-resize;
+}
+.GUIArea .GUIWindow .GUIBorderBottomRight{
+	position: absolute;
+	top: 100%;
+	left: 100%;
+	width: 10px;
+	height: 10px;
+	cursor: se-resize;
+}
+.GUIArea .GUIWindow .GUITitle{
+	position: relative;
+	height: 30px;
+	border-radius: 10px 10px 0px 0px;
+	background-color: #7567eb;
+	cursor: move;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.GUIArea .GUIWindow .GUITitle .GUITitleIcons{
+	position: absolute;
+	top: 0px;
+	right: 10px;
+	height: 30px;
+	white-space: nowrap;
+}
+.GUIArea .GUIWindow .GUITitle .GUITitleText{
+	position: absolute;
+	vertical-align: middle;
+	margin-left: 10px;
+	line-height: 30px;
+	color: white;
+}
+
+.GUIArea .GUIWindow .GUITitle .GUITitleIcons div{
+	display: inline-block;
+	height: 30px;
+	width: 30px;
+	cursor: default;
+	background-size: 100% 100%;
+}
+.GUIArea .GUIWindow .GUITitle .GUITitleIcons div:hover{
+	background-color: rgba(0,0,0,0.2)
+}
+
+.GUIArea .GUIWindow .GUITitle .GUITitleMin{
+	background-image: url("images/min.svg");
+
+}
+.GUIArea .GUIWindow .GUITitle .GUITitleClose{
+	background-image: url("images/close.svg");
+}
+.GUIArea .GUIWindow .GUITitle .GUITitleMax{
+	background-image: url("images/max.svg");
+}
+.GUIArea .GUIWindow .GUITitle .GUITitleNormal{
+	background-image: url("images/normal.svg");
+}
+.GUIArea .GUIButton{
+	box-sizing: border-box;
+	background-color: darkgray;
+	border-width: 1px;
+	border-style: solid;
+	border-color: whitesmoke dimgrey dimgrey whitesmoke;
+	padding: 2px;
+}
+.GUIArea .GUIPanel{
+	display: flex;
+	white-space: nowrap;
+	box-sizing: border-box;
+	background-color: darkgray;
+	border-width: 1px;
+	border-style: solid;
+	border-color: whitesmoke dimgrey dimgrey whitesmoke;
+	padding: 2px;
+}
+@keyframes minimize {
+    100% {height: 0px;}
+}
+@keyframes restore {
+    0% {height: 0px;}
+}
+@keyframes maximize {
+	0% {transform: scale(0)}
+    100% {transform: scale(1)}
+}
+@keyframes maxrestore {
+	0% {transform: scale(2)}
+    100% {transform: scale(1)}
+}
+@keyframes close {
+    100% {opacity: 0;transform: scale(0.0);}
+}
+
+.GUIArea .GUIWindow .GUIClient{
+	position: relative;
+	height: 200px;
+	background-color: #ffffff;
+	overflow: hidden;
+}
+
+
+.GUIArea .GUIWindow#root >.GUIClient{
+	margin: 0px;
+	height: 0px;
+	width: 0px;
+	background-color: transparent;
+	overflow: visible;
+}
+
+.GUIArea .GUIWindow #GUISeparate > .GUIClient{
+	user-select: none;
+	box-sizing: border-box;
+	background-color: #aaaaaa;
+	border: outset 2px #b8b7b7;
+}
+.GUIArea .GUIWindow #GUISeparate > .GUIClient#ns,#sn{
+	cursor: ns-resize;
+}
+.GUIArea .GUIWindow #GUISeparate > .GUIClient#we,#ew{
+	cursor: ew-resize;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeView{
+	overflow: auto;
+	user-select: none;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem{
+	display: flex;
+	flex-direction : column;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow{
+	display: flex;
+	flex: 1;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeCell{
+	display: flex;
+	vertical-align: middle;
+	overflow: hidden;
+}
+
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeBody{
+	flex: 1;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow:first-child:hover{
+	border-bottom: black 1px solid;
+}
+@keyframes treeOpen {
+	0%   {margin-top:-1.5em;opacity: 0.2;}
+	100% {margin-top:0%;}
+}
+@keyframes treeClose {
+	0%	{margin-top:0;}
+	100%{margin-top:-1.5em;opacity: 0;visibility:hidden;}
+}
+
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow:nth-child(2) > .GUITreeChild{
+	padding-left: 1em;
+	flex: 1;
+}
+/*
+.GUIArea .GUIWindow .GUIClient .GUITreeItem#open > .GUITreeRow:nth-child(2) > .GUITreeChild > .GUITreeItem{
+	animation: treeOpen 0.3s ease 0s 1 normal;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem#close > .GUITreeRow:nth-child(2) > .GUITreeChild > .GUITreeItem{
+	animation: treeClose 0.8s ease 0s 1 forwards;
+}
+*/
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeIcon{
+	background-repeat: no-repeat;
+	width: 16px;
+	height: 16px;
+	margin: 2px;
+	vertical-align: middle;
+}
+
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeIcon{
+	cursor: default;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem#close > .GUITreeRow >  .GUITreeIcon{
+	background-image: url("images/tclose.svg");
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem#open > .GUITreeRow >  .GUITreeIcon{
+	background-image: url("images/topen.svg");
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem#alone > .GUITreeRow >  .GUITreeIcon{
+	background-image: url("images/talone.svg");
+}
+
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow:first-child {
+	cursor: pointer;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem[data-select="true"] > .GUITreeRow:first-child {
+	background-color: rgba(80, 80, 233, 0.2);
+}
+
+.GUIListView{
+	user-select: none;
+	background-color: aqua;
+}
+.ListWork{
+	visibility: hidden;
+	position: fixed;
+}
+.GUIListView .Item{
+	box-sizing: border-box;
+	position: absolute;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.GUIListView .Header{
+	z-index: 1;
+	text-align: center;
+	cursor: pointer;
+	white-space: pre;
+	background-color: rgba(200,200,200,0.8);
+	border: solid 1px;
+	border-color:  #AAAAAA black black #AAAAAA;
+}
+.GUIListView .Header.Select{
+	background-color: rgba(151, 151, 151, 0.9);
+}
+.GUIListView .Item.Item0{
+	background-color: rgba(252, 250, 136, 0.8);
+}
+.GUIListView .Item.Item1{
+	background-color: rgba(223, 252, 228, 0.8);
+}
+.GUIListView .Item.Left{
+	text-align: left;
+}
+.GUIListView .Item.Right{
+	text-align: right;
+}
+.GUIListView .Item.ItemOver{
+	border-top: 2px solid rgba(0,0,0,0.1);
+	border-bottom: 2px solid rgba(0,0,0,0.1);
+	transform: scale(1.2);
+	transform-origin: 10%;
+
+}
+.GUIListView .Item.ItemSelect{
+	background-color: rgba(255,230,230,1.0);
+}
+.GUIListView .Item .Folder{
+	background-image: url("images/folder.svg");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.GUIListView .Item .File{
+	background-image: url("images/file.svg");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.GUIMoveNode{
+	position: fixed;
+	z-index: 200;
+	background-color: rgba(164, 173, 214, 0.589);
+	background-image: url("images/file.svg");
+	pointer-events: none;
+}
+.GUISelect{
+	box-sizing: border-box;
+	user-select: none;
+	vertical-align: middle;
+	overflow-wrap: break-word;
+	overflow: auto;
+	padding: 2px;
+}
+.GUISelect div{
+	margin: 1px;
+	padding: 1px;
+	cursor: pointer;
+	background-color: rgba(200,200,200,0.9);
+}
+.GUISelect div:hover{
+	background-color: rgba(230,230,230,0.9);
+}
+
+.GUIEditText{
+	box-sizing: border-box;
+	user-select: text;
+	background-color: rgba(200,200,200,0.9);
+	overflow-wrap: break-word;
+	overflow: auto;
+	vertical-align: middle;
+	padding: 2px;
+}
+.GUICalendar table{
+	user-select: none;
+	table-layout: fixed;
+	border-collapse: collapse;
+	width: 100%;
+	height: 100%;
+}
+.GUICalendar .TitleLine{
+	background-color: rgb(255, 224, 216);
+
+}
+.GUICalendar .TitleLine .TitleText{
+	text-align: center;
+}
+.GUICalendar .TitleLine .Button{
+	text-align: center;
+	cursor: pointer;
+	background-color: rgb(195, 215, 216);
+}
+
+.GUICalendar .Cell{
+	border: 2px solid #aaaaaa;
+	background-color: antiquewhite;
+}
+.GUICalendar .Line:first-child .Cell{
+	vertical-align: middle;
+	text-align: center;
+	font-size: 200%;
+
+}
+.GUICalendar Table .Line:nth-of-type(2){
+	text-align: center;
+}
+.GUICalendar Table .Line:nth-of-type(2) .Cell:first-child{
+	color: red;
+}
+.GUICalendar Table .Line:nth-of-type(2) .Cell:last-child{
+	color: blue;
+}
+.CellBody {
+	box-sizing: border-box;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.CellBody#now{
+	border: #7567eb solid;
+}
+.CellBody:hover{
+	display: block;
+	background-color: rgba(200,200,200,0.3);
+}
+.GUICalendar .Cell{
+	display: table-cell;
+}
+.GUICalendar .Cell .Day{
+	font-size: 110%;
+	text-align: right;
+	padding: 1px;
+}
+.GUICalendar .Cell .DayText{
+	font-weight: bold;
+	color: red;
+	text-align: center;
+	padding: 2px;
+	overflow: hidden;
+	white-space: nowrap;
+	font-size: 80%;
+	height: 1.2em;
+
+
+}
+.GUICalendar .Cell#Holiday .DayText{
+	background-color: rgb(253, 167, 135);
+}
+.GUICalendar .Cell:first-child .Day{
+	color: red;
+}
+.GUICalendar .Cell:last-child .Day{
+	color: red;
+}
+.GUICalendar .Cell#Holiday .Day{
+	color: red;
+}
+
+
+
+.GUIMessageBox .MSG{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.GUIMessageBox .PANEL{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.GUITextInput input,.GUITextInput button{
+	width: 100%;
+	height: 100%;
+}

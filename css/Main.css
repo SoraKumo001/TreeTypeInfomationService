@@ -1,0 +1,231 @@
+.LayoutTop{
+	display: flex;
+	align-items: center;
+	background-color: darkgrey;
+	align-items: center;
+}
+.LayoutTop div:first-child{
+	font-size: 200%;
+	color: white;
+	margin-left: 1em;
+	flex: 1;
+}
+
+
+div.menuItem{
+	background-color: rgba(255,255,255,0.5);
+	text-shadow: 1px 1px 0 rgba(255, 254, 254, 0.842);
+	padding: 8px;
+	border-radius: 20%;
+	margin: 4px;
+	cursor: pointer;
+	user-select: none;
+}
+
+div.ParamsEditView{
+	display: flex;
+}
+div.ParamsEditView > div{
+	margin: 1em;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction : column;
+	padding: 1em;
+	background-color: rgba(33, 111, 163, 0.7) !important;
+	color: white;
+	border-radius: 10px;
+
+}
+.ParamsEditView input{
+	position: relative;
+	margin: 10px;
+	background-color: rgba(240, 255, 255, 0.7)  !important;
+	padding: 8px;
+	border: 2px solid aquamarine;
+	border-radius: 10px;
+	color: black;
+	width: 200px;
+	font-family: Consolas, 'Courier New', Courier, Monaco, monospace;
+	font-size: 16px;
+	font-weight: bold;
+
+}
+
+.ParamsEditView > DIV>DIV>DIV>DIV{
+	position: absolute;
+	margin: 10px;
+	padding: 8px;
+	white-space: nowrap;
+}
+
+button.blueButton{
+	margin: 0.5em;
+    padding: 7px 20px;
+	border-radius: 25px;
+    text-decoration: none;
+    color: #FFF;
+	background-image: linear-gradient(45deg, rgb(7, 143, 255) 0%, #491bdf 100%);
+    transition: .4s;
+	border: none;
+	border-bottom: solid 3px #3201d6;
+}
+
+button.blueButton:hover {
+    background-image: linear-gradient(45deg, rgba(7, 143, 255, 0.842) 0%, #491bdfc5 100%);
+	border-bottom: none;
+}
+
+div.InputArea{
+	display: inline-flex;
+	margin: 2em;
+	padding:0.2em;
+	border-radius: 10px;
+	background-color: rgba(53, 121, 167, 0.7);
+	min-width: 300px;
+}
+
+div.BoxView{
+	overflow: auto !important;
+}
+div.BoxView > div{
+	display: inline-flex;
+	flex-direction : row;
+	margin: 1em;
+	border-radius: 10px;
+	background-color: rgba(33, 111, 163, 0.7);
+	padding:0.2em;
+	min-width: 300px;
+}
+
+div.BoxView > div > div:first-child > div{
+	background-color: rgba(17, 87, 134, 0.7);
+}
+div.BoxView > div > div:nth-child(2){
+	flex: 1;
+}
+div.BoxView > div > div:nth-child(2) > div{
+	background-color: rgba(17, 87, 134, 0.4);
+}
+div.BoxView > div > div > div{
+	color: white;
+	padding: 0.3em;
+	margin: 0.2em;
+}
+
+div.GroupView{
+	display: inline-flex;
+	align-items: center;
+	flex-direction : column;
+	margin: 1em;
+}
+
+div.QiitaInfoView{
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction : column;
+}
+
+input.title{
+	flex: 1;
+}
+
+div.TreeOption{
+	position: absolute;
+	right:0;
+}
+div.TreeOption span{
+	width: 1.2em;
+	display: inline-block;
+	margin: 1px;
+	padding: 0 2px;
+	background-color: rgba(200,200,200,0.5);
+	text-align: center;
+}
+div.TreeOption span:hover{
+	background-color: rgba(200,200,200,0.8);
+}
+
+.ContentsPage{
+	margin: 1em;
+	background-color: #f5f5f5;
+	padding:0.5em;
+	border-radius: 9px;
+}
+
+.ContentsArea{
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	padding-left: 1em;
+}
+.Contents .Title0{
+	display: none;
+}
+.Contents .Title1{
+	font-size: 250%;
+	border-bottom: solid 2px orange;
+	padding: 0.0em;
+}
+.Contents .Title2{
+	font-size: 180%;
+	border-bottom: solid 1px orange;
+	padding: 0.0em;
+}
+.Contents .Title3{
+	font-size: 130%;
+	padding: 0.0em;
+}
+.Contents .Date{
+	text-align: right;
+	padding: 0.1em;
+}
+.Contents .Body{
+	padding-left: 1.2em;
+	border-left: dashed #ffffff;
+}
+.Contents{
+	margin-bottom: 1em;
+}
+.Contents .Panel{
+	margin: 0.1em;
+	display: none;
+	position: absolute;
+	right: 0.1em;
+	top: 0.1em;
+}
+.Contents:hover .Panel{
+	display: flex;
+}
+.Contents .Panel div{
+	border: solid rgb(141, 162, 184);
+	background: rgb(161, 161, 250);
+	color: white;
+	padding: 0.1em;
+	margin: 0.1em;
+	cursor: pointer;
+}
+
+.GUITreeItem[data-type='TEXT'] {
+	padding-left: 0.8em;
+	color: #008127;
+}
+
+.GUIMenu{
+	user-select: none;
+	animation: fadeIn 0.5s ease 0s 1 normal;
+	padding: 1px;
+	position: absolute;
+	z-index: 10;
+	background-color: #ddddd6;
+}
+.GUIMenu > div{
+	background: rgba(200,200,250,0.85);
+	cursor: pointer;
+	margin: 1px;
+	padding: 2px;
+}
+.GUIMenu > div:hover{
+	background: #8888ff;
+}
