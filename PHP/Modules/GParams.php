@@ -9,18 +9,25 @@ class GParams{
 		"TABLES"=>[["params",0,1]]
 	];
 	public static function initModule(){
-		MG::DB()->exec("create table IF NOT EXISTS params(params_name TEXT primary key,params_value TEXT);");
+		if (MG::DB()->isConnect())
+			MG::DB()->exec("create table IF NOT EXISTS params(params_name TEXT primary key,params_value TEXT);");
 	}
 	public static function JS_setParam($name,$value)
 	{
+		if (!MG::DB()->isConnect())
+			return null;
 		return Self::setParam("Global_" . $name,$value);
 	}
 	public static function JS_getParam($name)
 	{
+		if (!MG::DB()->isConnect())
+			return null;
 		return Self::getParam("Global_" . $name);
 	}
 	public static function JS_getParams($names)
 	{
+		if (!MG::DB()->isConnect())
+			return null;
 		$names2 = [];
 		foreach ($names as $name) {
 			$names2[] = "Global_" . $name;

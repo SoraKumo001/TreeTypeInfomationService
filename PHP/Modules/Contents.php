@@ -20,7 +20,7 @@ class Contents{
 					contents_stat INTEGER,contents_type TEXT,
 					contents_date timestamp with time zone,contents_update timestamp with time zone,
 					contents_title_type integer,contents_title TEXT,contents_value TEXT)");
-			MG::DB()->exec("insert into contents values(default,null,1000,1,'PAGE',null,null,0,'Top','')");
+			MG::DB()->exec("insert into contents values(default,null,1000,1,'PAGE',current_timestamp,current_timestamp,0,'Top','')");
 			Files::createDir(1,"Contents");
 
 		}
@@ -31,6 +31,8 @@ class Contents{
 		$values = MG::DB()->queryData(
 			"select contents_id as id,contents_parent as pid,contents_stat as stat,
 			contents_type as type,contents_title as title from contents $visible order by contents_type='PAGE',contents_priority");
+		if($values === null)
+			return null;
 		//ID参照用データの作成
 		foreach($values as &$value){
 			$items[$value["id"]] = &$value;
