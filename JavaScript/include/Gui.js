@@ -43,6 +43,32 @@
 	GUI.setFocus = function(node){
 		GUI.focus = node;
 	}
+	GUI.createEvent = function(node) {
+		node.GUI = { events: {} };
+		node.callEvent = function (e) {
+			var eventList = node.GUI.events[e.etype];
+			if (eventList) {
+				for (var i = 0; i < eventList.length; i++)
+					eventList[i].call(this, e);
+			}
+		}
+		node.addEvent = function (name, func) {
+			var eventList = node.GUI.events[name];
+			if (!eventList) {
+				eventList = [];
+				node.GUI.events[name] = eventList;
+			}
+			eventList.push(func);
+		}
+		node.delEvent = function (name, func) {
+			var eventList = node.GUI.events[name];
+			if (!eventList)
+				return;
+			var index = eventList.indexOf(func);
+			if (index >= 0)
+				eventList.splice(index, 1);
+		}
+	}
 
 	//イベント処理全般
 	function onTouchEnd(e){
@@ -273,6 +299,8 @@
 			return innerWidth;
 		return document.body.clientWidth;
 	}
+	GUI.getClientHeight = getClientHeight;
+	GUI.getClientWidth = getClientWidth;
 	function onResize(e){
 		if (GUI.rootWindow) {
 			GUI.rootWindow.setSize(getClientWidth(), getClientHeight());

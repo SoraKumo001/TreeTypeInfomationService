@@ -397,50 +397,68 @@
 
 	AFL.createAdapter = function(scriptUrl,sessionHash){
 		var adapter = {"url":scriptUrl,"sessionHash":sessionHash};
+
+		var functions = [];
+		function connectServer() {
+			if (functions.length === 0)
+				return;
+			var functions2 = functions;
+			functions = [];
+			var values = { "command": "exec", "sessionHash": adapter.sessionHash, "functions": functions2 };
+			AFL.sendJson(adapter.url, values, function (r) {
+				var p = null;
+				var index = 0;
+				for (var i in functions2) {
+					var func = functions2[i];
+					if (func.proc !== p) {
+						if (p) {
+							if (r === null || r.result == 0)
+								p.on(null);
+							else
+								p.on(i - index == 1 ? r.values[index] : r.values.slice(index, i));
+						}
+						index = i;
+						p = func.proc;
+					}
+				}
+				if (r === null || r.result == 0)
+					p.on(null);
+				else
+					p.on(i - index == 0 ? r.values[index] : r.values.slice(index, i));
+			});
+
+		}
 		adapter.exec = function(){
 			if(arguments.length == 0)
 				return;
 			var proc = {on:null};
-			var functions = [];
 			if(arguments[0] instanceof Array)
 				for(var i=0;i<arguments.length;i++)
-					functions.push({"function":arguments[i][0],"params":Array.prototype.slice.call(arguments[i], 1)});
+					functions.push({ "function": arguments[i][0], "params": Array.prototype.slice.call(arguments[i], 1), "proc": proc});
 			else
-				functions.push({"function":arguments[0],"params":Array.prototype.slice.call(arguments, 1)});
-
-
-			var values = {"command":"exec","sessionHash":adapter.sessionHash,"functions":functions};
-			AFL.sendJson(this.url,values,function(r){
-				if (proc.on){
-					if(r === null || r.result==0)
-						proc.on(null);
-					else
-						proc.on(functions.length==1?r.values[0]:r.values);
-				}
-			});
+				functions.push({ "function": arguments[0], "params": Array.prototype.slice.call(arguments, 1), "proc": proc});
+			setTimeout(connectServer,0);
 			return proc;
 		}
 		adapter.upload = function(){
 			if (arguments.length == 0)
 				return;
-			var _this = this;
+			var proc = { on: null ,progress:null};
 			var functions = [];
 			functions.push({ "function": arguments[0], "params": Array.prototype.slice.call(arguments, 2) });
 			var values = { "command": "exec", "sessionHash": adapter.sessionHash, "functions": JSON.stringify(functions) };
 			AFL.sendFile(this.url, values, arguments[1], function (r) {
-				if (_this.on) {
+				if (proc.on) {
 					if (r === null || r.result == 0)
-						_this.on(null);
+						proc.on(null);
 					else
-						_this.on(functions.length == 1 ? r.values[0] : r.values);
+						proc.on(functions.length == 1 ? r.values[0] : r.values);
 				}
 			},function(r){
-				if(_this.progress)
-					_this.progress(r);
+				if (proc.progress)
+					proc.progress(r);
 			});
-			this.on = null;
-			this.progress = null;
-			return this;
+			return proc;
 		}
 		adapter.setSession = function(sessionHash){this.sessionHash=sessionHash;}
 		adapter.getSession = function(){return this.sessionHash};

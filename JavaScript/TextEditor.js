@@ -73,7 +73,7 @@ function createTextEditor(){
 		addButton("<u>線</u>",function(){win.sendCommand("underline");});
 		addButton("<del>消</del>",function(){win.sendCommand("strikeThrough");});
 		addButton("Ａ",function(){createLink(iframe.contentWindow.getSelection());});
-		//addButton("CODE",function(){setPGCode(iframe.contentWindow.getSelection());});
+		addButton("CODE",function(){setPGCode(iframe.contentWindow.getSelection());});
 
 		//文字サイズ
 		addButton("大",function(){
@@ -122,6 +122,15 @@ function createTextEditor(){
 		panel.getClient().classList.add("PanelArea");
 		win.addChild(panel,"top");
 		return panel;
+	}
+	win.createElement = function(name){
+		return iframe.contentDocument.createElement(name);
+	}
+	win.insertNode = function(node){
+		var r = iframe.contentDocument.getSelection().getRangeAt(0);
+		r.deleteContents();
+		r.insertNode(node);
+		updateHtmlTimer();
 	}
 	win.sendCommand = function(a,b,c){
 		iframe.contentDocument.execCommand(a,b,c);
@@ -227,7 +236,7 @@ function createTextEditor(){
 	}
 	mHtml.addEventListener("paste",function(e){
 		if(e.clipboardData.files.length){
-			insertImage(e.clipboardData.files);
+			//insertImage(e.clipboardData.files);
 		}else{
 			var text = e.clipboardData.getData("text/plain");
 			win.sendCommand("insertText", false, text);
@@ -236,8 +245,8 @@ function createTextEditor(){
 		e.preventDefault();
 	});
 	mHtml.addEventListener("drop",function(e){
-		insertImage(e.dataTransfer.files);
-		e.preventDefault();
+		//insertImage(e.dataTransfer.files);
+		//e.preventDefault();
 	});
 	mHtml.ondragover = function (e) {
 		e.preventDefault();

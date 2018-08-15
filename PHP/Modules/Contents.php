@@ -25,10 +25,12 @@ class Contents{
 
 		}
 	}
-	public static function &JS_getTree($id=1){
+
+	public static function JS_getTree($id=1){
+		$visible = MG::isAdmin()?"":"where contents_stat=1";
 		$values = MG::DB()->queryData(
 			"select contents_id as id,contents_parent as pid,contents_stat as stat,
-			contents_type as type,contents_title as title from contents order by contents_type='PAGE',contents_priority");
+			contents_type as type,contents_title as title from contents $visible order by contents_type='PAGE',contents_priority");
 		//ID参照用データの作成
 		foreach($values as &$value){
 			$items[$value["id"]] = &$value;
@@ -53,52 +55,86 @@ class Contents{
 		return $contents;
 	}
 	public static function JS_getContents($id){
-		$values = MG::DB()->queryData("select contents_id as id,contents_parent as pid,contents_stat as stat,contents_type as type,contents_date as date,contents_update as update,contents_title_type as title_type,contents_title as title,contents_value as value from contents where contents_id=?",$id);
+		$visible = MG::isAdmin() ? "" : "and contents_stat=1";
+		$values = MG::DB()->queryData("select contents_id as id,contents_parent as pid,contents_stat as stat,contents_type as type,contents_date as date,contents_update as update,contents_title_type as title_type,contents_title as title,contents_value as value from contents where contents_id=? $visible",$id);
 		return $values[0];
 	}
 	public static function JS_updateContents($id,$stat,$date,$contentsType,$titleType,$title,$value){
+		if (!MG::isAdmin())
+			return null;
 		return MG::DB()->exec(
 			"update contents SET contents_stat=?,contents_date=?,contents_type=?,contents_update=current_timestamp,
 			contents_title_type=?,contents_title=?,contents_value=? where contents_id=?",
 			$stat,$date,$contentsType,$titleType,$title,$value,$id)==1;
 	}
 	public static function JS_deleteContents($id){
+		if (!MG::isAdmin())
+			return null;
 		$ids = [];
 		MG::DB()->exec("begin");
 		$flag = Self::deleteContents($id,$ids);
 		MG::DB()->exec("commit");
 		return $ids;
 	}
+
 	public static function JS_createContents($id,$vector,$type){
+		if (!MG::isAdmin())
+			return null;
 		$cid = 0;
-		if($vector == 2){
-			$titleType = 1;
-			if($type != 'PAGE'){
-				$count = Self::getDeeps($id);
-				if($count == 0)
-					$titleType = 2;
-				else
-					$titleType = 3;
-			}
-			$cid = MG::DB()->get(
-				"insert into contents values(default,?,100000,1,?,
-				current_timestamp,current_timestamp,?,'New','') RETURNING contents_id",
-				$id,$type,$titleType);
-			Self::updatePriority($id);
+		switch($vector){
+			case 0:
+			case 1:
+				$pid = Self::getContentsParent($id);
+				$priority = Self::getContentsPriority($id)+ ($vector == 0 ? -5 : 5);
+				break;
+			case 2:
+			case 3:
+				$pid = $id;
+				$priority = $vector == 2 ? 0 : 100000;
+				break;
+			default:
+				return null;
+
 		}
-		return $cid;
+		$titleType = 1;
+		if ($type != 'PAGE') {
+			$count = Self::getDeeps($pid);
+			if ($count == 0)
+				$titleType = 2;
+			else
+				$titleType = 3;
+		}
+		$cid = MG::DB()->get(
+			"insert into contents values(default,?,?,-1,?,
+				current_timestamp,current_timestamp,?,'New','') RETURNING contents_id",
+			$pid,
+			$priority,
+			$type,
+			$titleType);
+		Self::updatePriority($pid);
+		return ["pid"=>$pid,"id"=>$cid];
 	}
 	public static function JS_moveContents($id,$vector)
 	{
-		$priority = MG::DB()->get("select contents_priority from contents where contents_id=?",$id);
+		if (!MG::isAdmin())
+			return null;
+		$priority = Self::getContentsPriority($id);
 		if(!$priority)
 			return false;
 		$count = MG::DB()->exec(
 			"update contents set contents_priority = ? where contents_id=?",
-			$priority +($vector<0?-1500:1500),$id);
+			$priority +($vector<0?-15:15),$id);
 		Self::updatePriorityFromChild($id);
-		$priority2 = MG::DB()->get("select contents_priority from contents where contents_id=?", $id);
+		$priority2 = Self::getContentsPriority($id);
 		return $priority !== $priority2;
+	}
+	public static function getContentsParent($id)
+	{
+		return MG::DB()->get("select contents_parent from contents where contents_id=?", $id);
+	}
+	public static function getContentsPriority($id)
+	{
+		return MG::DB()->get("select contents_priority from contents where contents_id=?", $id);
 	}
 	public static function updatePriority($id){
 		$values = MG::DB()->queryData2("select contents_id from contents where contents_parent=? order by contents_type='PAGE',contents_priority",$id);
@@ -114,7 +150,7 @@ class Contents{
 		$values = MG::DB()->queryData2("select contents_id from contents where contents_parent=(select contents_parent from contents where contents_id=?) order by contents_type='PAGE',contents_priority", $id);
 		$sql = "";
 		foreach ($values as $key => $value) {
-			$sql .= sprintf("update contents SET contents_priority=%d where contents_id=%d;\n", ($key + 1) * 1000, $value[0]);
+			$sql .= sprintf("update contents SET contents_priority=%d where contents_id=%d;\n", ($key + 1) * 10, $value[0]);
 		}
 		if ($sql !== "")
 			MG::DB()->exec($sql);
@@ -130,11 +166,12 @@ class Contents{
 	}
 	public static function &getContentsPageFromParent($pid)
 	{
+		$visible = MG::isAdmin() ? "" : "and contents_stat=1";
 		//親Idを元にコンテンツを抽出
-		$values = MG::DB()->queryData("select contents_id as id,contents_parent as pid,contents_stat as stat,contents_type as type,contents_date as date,contents_update as update,contents_title_type as title_type,contents_title as title,contents_value as value from contents where contents_parent=? and contents_type != 'PAGE' order by contents_priority", $pid);
+		$values = MG::DB()->queryData("select contents_id as id,contents_parent as pid,contents_stat as stat,contents_type as type,contents_date as date,contents_update as update,contents_title_type as title_type,contents_title as title,contents_value as value from contents where contents_parent=? and contents_type != 'PAGE' $visible order by contents_priority", $pid);
 		//子コンテンツを抽出
 		foreach($values as &$value){
-			$value["childs"] = Self::getContentsPageFromParent($value["id"]);
+			$value["childs"] = &Self::getContentsPageFromParent($value["id"]);
 		}
 		return $values;
 	}

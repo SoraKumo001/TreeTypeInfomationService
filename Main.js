@@ -1,21 +1,4 @@
-function createEvent(node){
-	node.GUI={events:{}};
-	node.callEvent = function (e) {
-		var eventList = node.GUI.events[e.etype];
-		if (eventList) {
-			for (var i = 0; i < eventList.length; i++)
-				eventList[i].call(this, e);
-		}
-	}
-	node.addEvent = function (name, func) {
-		var eventList = node.GUI.events[name];
-		if (!eventList) {
-			eventList = [];
-			node.GUI.events[name] = eventList;
-		}
-		eventList.push(func);
-	}
-}
+
 
 function createMenu(items) {
 	function onClick() {
@@ -27,7 +10,7 @@ function createMenu(items) {
 	menu.className = "GUIMenu";
 	document.body.appendChild(menu);
 	menu.addEventListener("mouseleave", function () {this.close(); })
-	createEvent(menu);
+	GUI.createEvent(menu);
 	for (var i in items) {
 		var item = items[i];
 		var div = document.createElement("div");
@@ -52,13 +35,16 @@ document.addEventListener("DOMContentLoaded",onLoad);
 
 //プログラム開始動作
 function onLoad(){
+	Contents.loadTitle();
 	//認証処理後、onStartを呼び出す
 	SESSION.requestSession(onStart,false);
+
 }
 System = {};
 System.reload = function(){
 	onStart();
 }
+
 function onStart(){
 	GUI.rootWindow.removeChildAll();
 
@@ -70,10 +56,33 @@ function onStart(){
 
 	var title = document.createElement("div");
 	top.getClient().appendChild(title);
-	title.textContent = "Tree Type Infomation Service";
+	title.textContent = System.title;
 
+	Contents.addEvent("title",function(){
+		title.textContent = System.title;
+	});
 
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){
+		var visible = document.createElement("div");
+		System.visible = setting;
+		visible.className = "menuItem";
+		visible.textContent = "表示";
+		top.getClient().appendChild(visible);
+		visible.addEventListener("click", function () {
+			var flag = !Contents.isVisible();
+			visible.textContent = flag?"表示":"非表示";
+			Contents.setVisible(flag);
+		});
+
+		var file = document.createElement("div");
+		System.file = setting;
+		file.className = "menuItem";
+		file.textContent = "FILE";
+		top.getClient().appendChild(file);
+		file.addEventListener("click", function () {
+			createFileWindow();
+		});
+
 		var setting = document.createElement("div");
 		System.setting = setting;
 		setting.className = "menuItem";
@@ -82,6 +91,8 @@ function onStart(){
 		setting.addEventListener("click", function () {
 			createSettingView(mainView);
 		});
+
+
 	}
 
 
@@ -98,9 +109,6 @@ function onStart(){
 	mainView.setChildStyle("client");
 
 	createContensView(mainView);
-	//createCustomEditor();
-	//createFileWindow();
-	//createMenu(["上に作成","下に作成","子として作成"]);
 }
 
 

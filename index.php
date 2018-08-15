@@ -3,6 +3,7 @@ require_once("PHP/Manager.php");
 
 
 function outputFile($fileName){
+	//JavaScriptを自動的に出力
 	$files = scandir(dirname(__FILE__)."/JavaScript");
 	$scripts = "";
 	foreach($files as $file){

@@ -27,7 +27,6 @@ function createContentsView(){
 	client.appendChild(page);
 	win.loadContents = function(id){
 		if (Contents.nodes[id]){
-			//client.scrollTop = Contents.nodes[id].offsetTop;
 			scrollTo(client, Contents.nodes[id].offsetTop);
 			return;
 		}
@@ -39,11 +38,47 @@ function createContentsView(){
 			while (page.childNodes.length)
 				page.removeChild(page.childNodes[0]);
 			page.appendChild(createContents(value));
-
-			//scrollTo(client, Contents.nodes[id].offsetTop);
-			//client.scrollTop = Contents.nodes[id].offsetTop;
 		}
 	}
+	win.moveContents = function (id, vector){
+		var node = Contents.nodes[id];
+		if(node == null)
+			return;
+		var parent = node.parentNode;
+		var childs = parent.childNodes;
+		for (var i = 0; i < childs.length; i++) {
+			if (childs[i] === node) {
+				if (vector < 0) {
+					if (i === 0)
+						return false;
+					parent.insertBefore(node, childs[i - 1]);
+				} else {
+					if (i === childs.length - 1)
+						return false;
+					parent.insertBefore(childs[i + 1], node);
+				}
+				break;
+			}
+		}
+	}
+	Contents.addEvent("update",function(r){
+		var value = r.value;
+		var contents = Contents.nodes[value["id"]];
+		if (contents)
+			contents.updateContents(value);
+	});
+	Contents.addEvent("delete", function (r) {
+		var ids = r.ids;
+		if (ids && ids.length > 0) {
+			for (var i in ids) {
+				var id = ids[i];
+				var contents = Contents.nodes[id];
+				if (contents) {
+					contents.deleteContents();
+				}
+			}
+		}
+	});
 	return win;
 }
 function createContents(value){
@@ -54,7 +89,9 @@ function createContents(value){
 	contents.className = "Contents";
 	area.appendChild(contents);
 
-	contents.appendChild(createControlPanel(value["id"]));
+	//管理者用編集メニュー
+	if (SESSION.isAuthority("SYSTEM_ADMIN"))
+		contents.appendChild(createControlPanel(value["id"]));
 
 	var title = document.createElement('div');
 	title.className = "Title" + value["title_type"];
@@ -77,10 +114,23 @@ function createContents(value){
 		childs.appendChild(createContents(c[i]));
 	}
 	area.updateContents = function(value){
-		title.textContent = value["title"];
-		date.textContent = (new Date(value["date"])).toLocaleString();
-		body.innerHTML = value["value"];
+		if (area.dataset.type === value["type"]){
+			area.dataset.stat = value["stat"];
+			title.textContent = value["title"];
+			date.textContent = (new Date(value["date"])).toLocaleString();
+			body.innerHTML = value["value"];
+			body.querySelectorAll("img").forEach(function(node){
+				node.onclick = function(){
+					window.open(this.src, 'newtab');
+				}
+			});
+		}
 	}
+	area.deleteContents = function () {
+		area.parentNode.removeChild(this);
+		Contents.nodes[value["id"]] = null;
+	}
+	area.dataset.type = value["type"];
 	area.updateContents(value);
 	return area;
 }
@@ -90,13 +140,19 @@ function createControlPanel(id){
 		case 0:
 			createCustomEditor(id);
 			break;
+		case 1:
+			Contents.createContentsMenu(id, 'TEXT', this);
+			break;
+		case 2:
+			Contents.moveContents(id, -1);
+			break;
 		case 3:
-			Contents.createContents(id, 2, 'TEXT');
+			Contents.moveContents(id, 1);
 			break;
 		}
 	}
 
-	var items = ["Edit","C↑","C↓","C→","M↑","M↓"];
+	var items = ["Edit", "🖹", "🔺", "🔻"];
 	var panel = document.createElement('div');
 	panel.className = "Panel";
 	for(var i in items){

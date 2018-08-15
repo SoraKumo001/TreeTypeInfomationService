@@ -160,6 +160,16 @@ div.TreeOption span:hover{
 	flex-direction: column;
 	padding-left: 1em;
 }
+
+[data-visible="false"] .ContentsArea:not([data-stat="1"]){
+	display: none;
+}
+.ContentsArea[data-stat="0"]{
+	border: blue solid;
+}
+.ContentsArea[data-stat="-1"]{
+	border: red solid;
+}
 .Contents .Title0{
 	display: none;
 }
@@ -206,10 +216,23 @@ div.TreeOption span:hover{
 	margin: 0.1em;
 	cursor: pointer;
 }
-
+.GUITreeItem {
+	padding-left: 0;
+	color: black;
+}
 .GUITreeItem[data-type='TEXT'] {
 	padding-left: 0.8em;
 	color: #008127;
+}
+
+.GUITreeItem[data-stat='0'] >div> .GUITreeBody{
+	text-decoration: line-through blue;
+}
+.GUITreeItem[data-stat='-1'] >div>.GUITreeBody{
+	text-decoration: line-through red ;
+}
+[data-visible="false"] .GUITreeItem:matches([data-stat="-1"] [data-stat="0"]) {
+	display: none !important;
 }
 
 .GUIMenu{
