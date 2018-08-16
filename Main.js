@@ -22,7 +22,8 @@ function createMenu(items,node) {
 
 	menu.close = function(){
 		this.addEventListener("animationend", function (e) {
-			this.parentNode.removeChild(this);
+			if (this.parentNode)
+				this.parentNode.removeChild(this);
 		});
 		this.style.animation = "close 0.2s ease 0s 1 forwards";
 	}

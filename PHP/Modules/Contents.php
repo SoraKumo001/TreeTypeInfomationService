@@ -36,10 +36,25 @@ class Contents{
 		);
 		if ($values === null)
 			return null;
-		//ID参照用データの作成
 		foreach ($values as &$value) {
-			$items[$value["id"]] = &$value;
+			$id2 = $value["id"];
+			//ファイルデータの読み出し
+			$path = sprintf("/Contents/%04d/%02d", ((int)($id2 / 100)) * 100, $id2 % 100);
+			$fileId = Files::getDirId(1, $path);
+			if ($fileId != null) {
+				$fileList = Files::getChildList($fileId);
+				if(count($fileList)){
+					$f = [];
+					foreach($fileList as $fileId){
+						$f = Files::getFile($fileId[0]);
+					}
+					$value["files"][]=&$f;
+				}
+			}
+			//ID参照用データの作成
+			$items[$id2] = &$value;
 		}
+
 		//親子関係の作成
 		foreach ($items as &$item) {
 			if ($item["pid"] !== null) {
@@ -48,7 +63,8 @@ class Contents{
 			}
 		}
 		ob_start("ob_gzhandler");
-		header('content-type: application/force-download');
+		//header('content-type: application/force-download');
+		header('content-type: text/json');
 		header('Content-disposition: attachment; filename="export.json"');
 		header("Access-Control-Allow-Origin: *");
 		echo json_encode($items[$id], JSON_UNESCAPED_UNICODE);
@@ -60,13 +76,24 @@ class Contents{
 		$value = json_decode($value, true);
 		MG::DB()->exec("begin");
 		if($mode == 0){
-			//上書き元のデータを取得
-			$contents = MG::DB()->gets("select contents_parent as parent,contents_priority as priority from contents where contents_id=?",$id);
-			$ids = [];
-			//上書き元のデータを削除
-			Self::deleteContents($id, $ids);
-			$value["priority"] = $contents["priority"];
-			Self::import($contents["parent"],$value);
+			if($id == 1){
+				//全データを削除
+				MG::DB()->exec("TRUNCATE table contents;select setval ('contents_contents_id_seq', 1, false);");
+				//関連ファイルの削除
+				$fileId = Files::getDirId(1, "/Contents");
+				Files::deleteFile($fileId);
+				Files::createDir(1, "Contents");
+				//インポート処理
+				Self::import(null, $value);
+			}else{
+				//上書き元のデータを取得
+				$contents = MG::DB()->gets("select contents_parent as parent,contents_priority as priority from contents where contents_id=?",$id);
+				$ids = [];
+				//上書き元のデータを削除
+				Self::deleteContents($id, $ids);
+				$value["priority"] = $contents["priority"];
+				Self::import($contents["parent"],$value);
+			}
 		}else{
 			Self::import($id ,$value);
 		}
@@ -89,6 +116,23 @@ class Contents{
 		);
 		if($cid === null)
 			return false;
+		//ファイルの復元処理
+		if(isset($value["files"])){
+			$ids = [];
+			$dirId = Files::createDir(1, Self::getDirPath($cid));
+			foreach($value["files"] as $file){
+				$ids[$file["id"]] = Files::setFile($dirId, $file["name"],$file["date"],$file["value"]);
+			}
+			foreach($ids as $srcId => $destId){
+				$convertSrc[] = sprintf('/src="\?command=Files\.download&amp;id=%d"/',$srcId);
+				$convertDest[] = sprintf('/src="?command=Files.download&amp;id=%d"/', $destId);
+			}
+			$value["value"] = preg_replace($convertSrc, $convertDest, $value["value"]);
+			MG::DB()->exec(
+				"update contents set contents_value=? where contents_id=?",
+				$value["value"],
+				$cid);
+		}
 		//子データの挿入
 		if(isset($value["childs"])){
 			foreach($value["childs"] as $child){
@@ -112,7 +156,7 @@ class Contents{
 		}
 		//親子関係の作成
 		foreach($items as &$item){
-			if($item["pid"] !== null){
+			if($item["pid"] !== null && isset($items[$item["pid"]])){
 				$parent = &$items[$item["pid"]];
 				$parent["childs"][] = &$item;
 			}
@@ -238,6 +282,11 @@ class Contents{
 		if($id === 1)
 			return true;
 		$idList[] = $id;
+		//関連ファイルの削除
+		$path = Self::getDirPath($id);
+		$fileId = Files::getDirId(1, $path);
+		Files::deleteFile($fileId);
+		//コンテンツの削除
 		return MG::DB()->exec("delete from contents where contents_id=?",$id)===1;
 	}
 	public static function &getContentsPageFromParent($pid)
@@ -250,6 +299,9 @@ class Contents{
 			$value["childs"] = &Self::getContentsPageFromParent($value["id"]);
 		}
 		return $values;
+	}
+	public static function getDirPath($id){
+		return sprintf("/Contents/%04d/%02d", ((int)($id / 100)) * 100, $id % 100);
 	}
 
 	public static function getParentPage($id){

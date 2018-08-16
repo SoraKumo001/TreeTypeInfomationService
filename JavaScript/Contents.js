@@ -66,6 +66,14 @@ Contents.setVisible = function (flag) {
 	Contents.loadTree();
 	document.body.dataset.visible = flag;
 }
+Contents.loadTree = function () {
+	Contents.nodes = [];
+	ADP.exec("Contents.getTree").on = function (value) {
+		if (value) {
+			Contents.callEvent({etype:"loadTree",value:value})
+		}
+	}
+}
 Contents.moveContents = function (id, vector) {
 	ADP.exec("Contents.moveContents", id, vector).on = function (flag) {
 		if (flag) {
@@ -248,7 +256,12 @@ function createContensView(mainView){
 			}
 		}
 	}
-	treeView.loadTree();
+	Contents.addEvent("loadTree",function(r){
+		treeView.clearItem();
+		setTreeItem(treeView.getRootItem(), r.value);
+		goLocation();
+	});
+	Contents.loadTree();
 	return separate;
 }
 function createImportView(id){
@@ -260,7 +273,10 @@ function createImportView(id){
 		reader.readAsText(file);
 		reader.onload = function () {
 			var mode = client.querySelector("input");
-			ADP.exec("Contents.import", id, mode.checked?0:1,this.result);
+			ADP.exec("Contents.import", id, mode.checked?0:1,this.result).on = function(){
+				Contents.loadTree();
+				win.close();
+			};
 		}
 	}
 

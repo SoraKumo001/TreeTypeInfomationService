@@ -18,7 +18,10 @@ class Files{
 	public static function JS_createDir($parent,$name){
 		if(!MG::isAdmin())
 			return ["result"=>0,"message"=>"ディレクトリ作成 権限エラー"];
-		return Self::createDir($parent,$name);
+		$id = Self::createDir($parent,$name);
+		if($id === 0)
+			return ["result" => 0, "message" => "フォルダの作成失敗"];
+		return ["result" => 1, "message" => "フォルダの作成", "value" => $id];
 	}
 	public static function JS_setFileName($id,$name){
 		if(!MG::isAdmin())
@@ -68,13 +71,22 @@ class Files{
 		}
 		return $result;
 	}
-	public function JS_download(){
+	public static function JS_download(){
 		if(MG::isParams(["id"]))
 			Self::getFileStream(MG::getParam("id"));
 		return null;
 	}
 	public static function getFileInfo($fileId){
 		return MG::DB()->gets("select files_name,files_kind,octet_length(files_byte),files_date from files where files_id=?",$fileId);
+	}
+	public static function getFile($fileId)
+	{
+		return MG::DB()->gets("select files_id as id,files_kind as kind,files_name as name,octet_length(files_byte) as size,files_date as date,encode(files_byte, 'base64') as value from files where files_id=? and files_kind=1", $fileId);
+	}
+	public static function setFile($pid,$name,$date,$value){
+		return MG::DB()->get(
+			"insert into files values(default,?,1,?,?,?,decode(?,'base64')) returning files_id",
+			$pid,MG::getUserCode(),$name,$date,$value);
 	}
 	public static function getFileStream($fileId){
 		$stmt = MG::DB()->query("select files_name,octet_length(files_byte),files_date,files_byte from files where files_id=? and files_kind=1",$fileId);
@@ -245,21 +257,21 @@ class Files{
 			if($file == null)
 				break;
 			if($file["files_kind"] != 0)
-				return ["result"=>0,"message"=>"フォルダの作成 失敗"];
+				return 0;
 			$p = $id;
 		}
 		if($i == count($values))
-			return ["result"=>0,"message"=>"フォルダの作成 既に作成済み","value"=>$id];
+			return $id;
 		for(;$i<count($values);$i++){
 			$name2 = $values[$i];
 			$id = MG::DB()->get(
 				"insert into files values(default,?,0,?,?,now(),null) returning files_id",
 				$p,MG::getUserCode(),$name2);
 			if($id === null)
-				$result = ["result"=>0,"message"=>"フォルダの作成 失敗"];
+				$result = 0;
 			$p = $id;
 		}
-		return ["result"=>1,"message"=>"フォルダの作成","value"=>$id];
+		return $id;
 	}
 	public static function getDirId($parent,$name){
 		$values = explode("/",ltrim($name, '/'));
