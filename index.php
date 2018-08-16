@@ -32,5 +32,5 @@ else{
 	//Log::output(MG::getSessionHash(),$result["message"]);
 	ob_start("ob_gzhandler");
 	header("Access-Control-Allow-Origin: *");
-	echo json_encode($result);
+	echo json_encode($result, JSON_UNESCAPED_UNICODE);
 }

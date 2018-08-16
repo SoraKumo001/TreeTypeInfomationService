@@ -36,22 +36,22 @@ Contents.loadTitle = function(){
 	}
 }
 Contents.createContentsMenu = function(id,type,node){
-	var rect = node.getBoundingClientRect();
-	var menu = createMenu(["兄弟(↑)", "兄弟(↓)", "子(↑)", "子(↓)"]);
-	var x = rect.x + (rect.width - menu.offsetWidth) / 2;
-	var y = rect.y + (rect.height - menu.offsetHeight) / 2;
-	if(x < 0) x = 0;
-	if(y < 0) y = 0;
-	var width = GUI.getClientWidth();
-	var height = GUI.getClientHeight();
-	if (x + menu.offsetWidth > width)
-		x = width - menu.offsetWidth;
-	if (y + menu.offsetHeight > height)
-		y = height - menu.offsetHeight;
-	menu.style.left = x + "px";
-	menu.style.top = y + "px";
+	var menu = createMenu(["兄弟(↑)", "兄弟(↓)", "子(↑)", "子(↓)"],node);
 	menu.addEvent("select", function (e) {
 		Contents.createContents(id, e.value, type);
+	});
+}
+Contents.createContentsMenu2 = function (id, node) {
+	var menu = createMenu(["Visible","Export","Import"], node);
+	menu.addEvent("select", function (e) {
+		switch (parseInt(e.value)){
+			case 1:
+				window.open(AFL.sprintf("?command=Contents.export&id=%d&sessionHash=%s", id, ADP.sessionHash));
+				break;
+			case 2:
+				createImportView(id);
+				break;
+		}
 	});
 }
 Contents.updateContents = function(value){
@@ -138,19 +138,26 @@ function createContensView(mainView){
 	//管理者用編集メニュー
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){
 		var mOptionNode = document.createElement("div");
-		mOptionNode.innerHTML = "<span>🖹</span><span>🔺</span><span>🔻</span>";
+		mOptionNode.innerHTML = "<span>🖊</span><span>🔧</span><span>🔺</span><span>🔻</span>";
 		mOptionNode.className = "TreeOption";
 		var options = mOptionNode.querySelectorAll("span");
 		options.forEach(o => {
 			o.addEventListener("click",function(e){
 				var id = this.parentNode.item.getItemValue();
 				var vector = 2;
-				if (this.textContent == '🔺')
-					Contents.moveContents(id, -1);
-				else if (this.textContent == '🔻')
-					Contents.moveContents(id, 1);
-				else{
-					Contents.createContentsMenu(id,"PAGE",this);
+				switch (this.textContent){
+					case '🔺':
+						Contents.moveContents(id, -1);
+						break;
+					case '🔻':
+						Contents.moveContents(id, 1);
+						break;
+					case '🖊':
+						Contents.createContentsMenu(id, "PAGE", this);
+						break;
+					case '🔧':
+						Contents.createContentsMenu2(id, this);
+						break;
 				}
 				e.preventDefault();
 				//
@@ -243,4 +250,34 @@ function createContensView(mainView){
 	}
 	treeView.loadTree();
 	return separate;
+}
+function createImportView(id){
+	function onDropFile(e){
+		e.preventDefault();
+		var file = e.dataTransfer.files[0];
+		var value = file.lastModifiedDate.toLocaleDateString();
+		var reader = new FileReader();
+		reader.readAsText(file);
+		reader.onload = function () {
+			var mode = client.querySelector("input");
+			ADP.exec("Contents.import", id, mode.checked?0:1,this.result);
+		}
+	}
+
+	var win = GUI.createFrameWindow();
+	win.setTitle("インポート");
+	win.setSize(300,200);
+	win.setPos();
+	var client = win.getClient();
+	client.innerHTML =
+		"<div class='Import'>"+
+		"<div>ファイルをドロップすると開始</div><br>"+
+		"<div><label><input name='stat' type='radio' value='0' checked>上書き <label/><label><input name='stat' type='radio' value='1'>子階層<label/></div>"+
+		"</div>";
+
+	client.addEventListener("drop", onDropFile);
+	client.ondragover = function (e) {
+		e.preventDefault();
+	}
+	return win;
 }

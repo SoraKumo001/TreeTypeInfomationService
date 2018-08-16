@@ -1,6 +1,6 @@
 
 
-function createMenu(items) {
+function createMenu(items,node) {
 	function onClick() {
 		menu.close();
 		menu.callEvent({etype:"select",value:this._value});
@@ -26,6 +26,22 @@ function createMenu(items) {
 		});
 		this.style.animation = "close 0.2s ease 0s 1 forwards";
 	}
+
+	//位置設定
+	var rect = node.getBoundingClientRect();
+	var x = rect.x + (rect.width - menu.offsetWidth) / 2;
+	var y = rect.y + (rect.height - menu.offsetHeight) / 2;
+	if (x < 0) x = 0;
+	if (y < 0) y = 0;
+	var width = GUI.getClientWidth();
+	var height = GUI.getClientHeight();
+	if (x + menu.offsetWidth > width)
+		x = width - menu.offsetWidth;
+	if (y + menu.offsetHeight > height)
+		y = height - menu.offsetHeight;
+	menu.style.left = x + "px";
+	menu.style.top = y + "px";
+
 	return menu;
 }
 (function(){
@@ -109,6 +125,8 @@ function onStart(){
 	mainView.setChildStyle("client");
 
 	createContensView(mainView);
+
+	//createImportView();
 }
 
 

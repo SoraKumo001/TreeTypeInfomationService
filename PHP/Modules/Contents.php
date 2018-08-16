@@ -25,9 +25,82 @@ class Contents{
 
 		}
 	}
+	public static function JS_export($id=1){
+		if(!MG::isAdmin())
+			return false;
+		$id = MG::getParam("id");
+		if($id == null)
+			$id = 1;
+		$values = MG::DB()->queryData(
+			"select contents_id as id,contents_parent as pid,contents_stat as stat,contents_priority as priority,contents_type as type,contents_date as date,contents_update as update,contents_title_type as title_type,contents_title as title,contents_value as value from contents order by contents_type='PAGE',contents_priority"
+		);
+		if ($values === null)
+			return null;
+		//ID参照用データの作成
+		foreach ($values as &$value) {
+			$items[$value["id"]] = &$value;
+		}
+		//親子関係の作成
+		foreach ($items as &$item) {
+			if ($item["pid"] !== null) {
+				$parent = &$items[$item["pid"]];
+				$parent["childs"][] = &$item;
+			}
+		}
+		ob_start("ob_gzhandler");
+		header('content-type: application/force-download');
+		header('Content-disposition: attachment; filename="export.json"');
+		header("Access-Control-Allow-Origin: *");
+		echo json_encode($items[$id], JSON_UNESCAPED_UNICODE);
+		exit(0);
+	}
+	public static function JS_import($id,$mode,$value){
+		if($id == null)
+			return false;
+		$value = json_decode($value, true);
+		MG::DB()->exec("begin");
+		if($mode == 0){
+			//上書き元のデータを取得
+			$contents = MG::DB()->gets("select contents_parent as parent,contents_priority as priority from contents where contents_id=?",$id);
+			$ids = [];
+			//上書き元のデータを削除
+			Self::deleteContents($id, $ids);
+			$value["priority"] = $contents["priority"];
+			Self::import($contents["parent"],$value);
+		}else{
+			Self::import($id ,$value);
+		}
+		MG::DB()->exec("commit");
 
+	}
+	public static function import($pid,$value){
+		//データの挿入
+		$cid = MG::DB()->get(
+			"insert into contents values(default,?,?,?,?,?,?,?,?,?) RETURNING contents_id",
+			$pid,
+			$value["priority"],
+			$value["stat"],
+			$value["type"],
+			$value["date"],
+			$value["update"],
+			$value["title_type"],
+			$value["title"],
+			$value["value"]
+		);
+		if($cid === null)
+			return false;
+		//子データの挿入
+		if(isset($value["childs"])){
+			foreach($value["childs"] as $child){
+				Self::import($cid,$child);
+			}
+		}
+		return true;
+	}
 	public static function JS_getTree($id=1){
+		//権限によって取得データに条件をつける
 		$visible = MG::isAdmin()?"":"where contents_stat=1";
+		//ツリー構造に必要なデータを抽出
 		$values = MG::DB()->queryData(
 			"select contents_id as id,contents_parent as pid,contents_stat as stat,
 			contents_type as type,contents_title as title from contents $visible order by contents_type='PAGE',contents_priority");
@@ -44,6 +117,7 @@ class Contents{
 				$parent["childs"][] = &$item;
 			}
 		}
+		//最上位のデータを返す
 		return $items[$id];
 	}
 	public static function JS_getContentsPage($id){

@@ -140,11 +140,11 @@ div.TreeOption span{
 	display: inline-block;
 	margin: 1px;
 	padding: 0 2px;
-	background-color: rgba(200,200,200,0.5);
+	background-color: rgba(100,200,100,0.95);
 	text-align: center;
 }
 div.TreeOption span:hover{
-	background-color: rgba(200,200,200,0.8);
+	background-color: rgba(100,200,200,0.95);
 }
 
 .ContentsPage{
@@ -251,4 +251,13 @@ div.TreeOption span:hover{
 }
 .GUIMenu > div:hover{
 	background: #8888ff;
+}
+
+div.Import{
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
 }
