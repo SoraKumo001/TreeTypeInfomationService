@@ -74,9 +74,10 @@ function onStart(){
 	var title = document.createElement("div");
 	top.getClient().appendChild(title);
 	title.textContent = System.title;
-
+	document.title = System.title;
 	Contents.addEvent("title",function(){
 		title.textContent = System.title;
+		document.title = System.title;
 	});
 
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){

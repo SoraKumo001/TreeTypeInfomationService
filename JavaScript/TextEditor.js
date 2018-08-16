@@ -42,12 +42,12 @@ function createTextEditor(){
 	function setPGCode(select){
 		var range = select.getRangeAt(0);
 		var text = range.toString();
-		var eText = text.replace(
+		var text = text.replace(
 			/["&'<>]/g,
 			function( ch ) { return { '"':'&quot;', '&':'&amp;', '\'':'&#39;', '<':'&lt;', '>':'&gt;' }[ ch ]; }
 			);
 		range.deleteContents();
-		range.insertNode(range.createContextualFragment("<code>" + eText + "</code>"));
+		range.insertNode(range.createContextualFragment("<code>" + text + "</code>"));
 		updateHtmlTimer();
 	}
 	function createStdPanel(){

@@ -248,6 +248,43 @@ class Contents{
 		$priority2 = Self::getContentsPriority($id);
 		return $priority !== $priority2;
 	}
+
+	public static function JS_getRss()
+	{
+		date_default_timezone_set("UTC");
+		$values = MG::DB()->queryData("select contents_id as id,contents_date as date,contents_title as title,contents_value as value from contents where contents_stat=1 and contents_type='PAGE' order by contents_date desc");
+
+		$url = GParams::getParam("Global_base_url", "");
+		$title = GParams::getParam("Global_base_title", "タイトル");
+		$info = GParams::getParam("Global_base_info", "");
+
+		header('Content-Type: text/xml; charset=utf-8', true);
+		$rss = new SimpleXMLElement('<rss/>');
+		$rss->addAttribute('version', '2.0');
+		$channel = $rss->addChild('channel');
+
+		$title = $channel->addChild('title', $title);
+		$description = $channel->addChild('description', $info);
+		$link = $channel->addChild('link', $url);
+		$language = $channel->addChild('language', 'ja-jp');
+
+		foreach ($values as $value) {
+			$msg = strip_tags($value["value"]);
+			$msg = str_replace("&nbsp;", "&#160;", $msg);
+			$msg = str_replace("&amp;", "&#38;", $msg);
+			$item = $channel->addChild("item");
+			$item->addChild("title", $value["title"]);
+			$item->addChild('description', $msg);
+			$item->addChild(
+				"link",
+				sprintf("%s?p=%d", $url, $value["id"])
+			);
+			$item->addChild("pubDate", date("r", strtotime($value["date"])));
+		}
+		ob_start("ob_gzhandler");
+		echo $rss->asXML();
+		exit(0);
+	}
 	public static function getContentsParent($id)
 	{
 		return MG::DB()->get("select contents_parent from contents where contents_id=?", $id);

@@ -34,6 +34,7 @@ function createContentsView(){
 			win.removeChildAll();
 			if(value === null)
 				return;
+			document.title = value["title"] + " ～ " + System.title;
 			Contents.nodes = [];
 			while (page.childNodes.length)
 				page.removeChild(page.childNodes[0]);
@@ -124,6 +125,20 @@ function createContents(value){
 					window.open(this.src, 'newtab');
 				}
 			});
+			//ソースコードのハイライト
+			//hljs.configure({ useBR: false });
+			var nodes = body.querySelectorAll("code");
+			for (var index = 0; nodes[index]; index++) {
+				var node = nodes[index];
+				//node.className = "";
+				node.style.padding = "3px";
+				node.style.maxWidth = "100%";
+				node.style.display = "inline-block";
+				node.style.whiteSpace = "pre";
+				//node.style.overflow = "auto";
+
+				hljs.highlightBlock(node);
+			}
 		}
 	}
 	area.deleteContents = function () {
