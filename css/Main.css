@@ -151,6 +151,7 @@ div.TreeOption span:hover{
     100% {opacity: 1;transform: scaleY(1.0);}
 }
 .ContentsPage{
+	position: relative;
 	margin: 1em;
 	background-color: #f5f5f5;
 	padding:0.5em;
@@ -159,7 +160,6 @@ div.TreeOption span:hover{
 
 .ContentsArea{
 	display: flex;
-	position: relative;
 	flex-direction: column;
 	padding-left: 1em;
 	animation: PageShow 0.2s ease 0s 1 normal;

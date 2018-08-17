@@ -1,22 +1,23 @@
-var handle = null;
+
 function scrollTo(node,pos){
-	if(handle)
-		clearInterval(handle);
+	if(this.handle)
+		clearInterval(this.handle);
 	pos -= 20;
 	if(pos < 0)
 		pos = 0;
-	handle = setInterval(function(){
+	this.handle = setInterval(function(){
 		var p = pos - node.scrollTop;
-		if(Math.abs(p) < 10){
+		if(Math.abs(p) < 5){
 			node.scrollTop = pos;
-			clearInterval(handle);
-			handle = null;
+			clearInterval(this.handle);
+			this.handle = null;
 		}
 		else
-			node.scrollTop += p/3;
+			node.scrollTop += p/5;
 
-	},30);
+	},10);
 }
+
 
 function createContentsView(){
 	var win = GUI.createWindow();
