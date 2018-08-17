@@ -365,5 +365,45 @@ class Contents{
 		}
 		return $count;
 	}
+	public static function outputPage(){
+		$id = MG::getParam("p");
+		if($id == null)
+			$id = 1;
+
+		$contents = Self::JS_getContentsPage($id);
+		if($contents === null)
+			return;
+		$title = Params::getParam("Global_base_title", "");
+		printf(
+			"<!DOCTYPE html>\n<html>\n\t<head>\n\t<meta charset=\"UTF-8\"/>\n" .
+				"\t<link rel=\"alternate\" type=\"application/rss+xml\" href=\"?command=Contents.getRss\" title=\"RSS2.0\" />\n" .
+				"<title>%s</title>" .
+				"</head>\n<body>\n",
+			htmlspecialchars($contents["title"]." ～ ".$title)
+		);
+
+		Self::outputContents($contents);
+		echo "</body>\n</html>\n";
+	}
+	public static function outputContents($contens){
+		//タイトルの出力
+		switch($contens["title_type"]){
+			case 1:
+				printf("<h1>%s</h1>\n", $contens["title"]);
+				break;
+			case 2:
+				printf("<h2>%s</h2>\n", $contens["title"]);
+				break;
+			case 3:
+				printf("<h3>%s</h3>\n", $contens["title"]);
+				break;
+		}
+		printf("<div>%s</div>\n", date("Y-m-d H:i:s", strtotime($contens["date"])));
+		printf("<p>%s</p>\n", $contens["value"]);
+
+		foreach($contens["childs"] as $child){
+			Self::outputContents($child);
+		}
+	}
 
 }

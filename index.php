@@ -1,6 +1,15 @@
 <?php
 require_once("PHP/Manager.php");
 
+function isBot(){
+//	return true;
+	$agent = $_SERVER['HTTP_USER_AGENT'];
+	if (stripos($agent, "bot") !== false)
+		return true;
+	if (stripos($agent, "search") !== false)
+		return true;
+	return false;
+}
 
 function outputFile($fileName){
 	//JavaScriptを自動的に出力
@@ -38,7 +47,10 @@ function outputFile($fileName){
 }
 
 $result = MG::init();
-if($result === null){
+if(isBot()){
+	ob_start("ob_gzhandler");
+	Contents::outputPage();
+}else if($result === null){
 	outputFile(".index.html");
 }
 else{
