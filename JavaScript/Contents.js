@@ -70,17 +70,21 @@ Contents.loadTree = function () {
 	Contents.nodes = [];
 	ADP.exec("Contents.getTree").on = function (value) {
 		if (value) {
-			Contents.callEvent({etype:"loadTree",value:value})
+			Contents.callEvent({etype:"loadTree",value:value});
 		}
 	}
 }
-Contents.moveContents = function (id, vector) {
-	ADP.exec("Contents.moveContents", id, vector).on = function (flag) {
+Contents.moveVector = function (id, vector) {
+	ADP.exec("Contents.moveVector", id, vector).on = function (flag) {
 		if (flag) {
-			var item = treeView.findItem(id);
-			item.moveItem(vector);
-			contentsMain.moveContents(id, vector);
-			Contents.selectContents(id);
+			Contents.callEvent({ etype: "vector", id: id,vector:vector });
+		}
+	}
+}
+Contents.moveContents = function(fromId,toId){
+	ADP.exec("Contents.moveContents", fromId, toId).on = function (flag) {
+		if (flag) {
+			Contents.loadTree();
 		}
 	}
 }
@@ -146,24 +150,24 @@ function createContensView(mainView){
 	//管理者用編集メニュー
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){
 		var mOptionNode = document.createElement("div");
-		mOptionNode.innerHTML = "<span></span><span></span><span></span><span></span>";
+		mOptionNode.innerHTML = "<span>🖊</span><span>🔧</span><span>🔺</span><span>🔻</span>";
 		mOptionNode.className = "TreeOption";
 		var options = mOptionNode.querySelectorAll("span");
 		options.forEach(o => {
-			o.addEventListener("click",function(e){
+			o.addEventListener("click", function (e) {
 				var id = this.parentNode.item.getItemValue();
 				var vector = 2;
-				switch (this.textContent){
-					case '':
-						Contents.moveContents(id, -1);
+				switch (this.textContent) {
+					case '🔺':
+						Contents.moveVector(id, -1);
 						break;
-					case '':
-						Contents.moveContents(id, 1);
+					case '🔻':
+						Contents.moveVector(id, 1);
 						break;
-					case '':
+					case '🖊':
 						Contents.createContentsMenu(id, "PAGE", this);
 						break;
-					case '':
+					case '🔧':
 						Contents.createContentsMenu2(id, this);
 						break;
 				}
@@ -184,7 +188,23 @@ function createContensView(mainView){
 				mOptionNode.parentNode.removeChild(mOptionNode);
 			}
 		});
+		treeView.addEvent("itemDrag",function(e){
+			var hoverItem = this.getHoverItem();
+			if (hoverItem){
+				Contents.moveContents(e.item.getItemValue(), hoverItem.getItemValue());
+			}
+		});
 	}
+	Contents.addEvent("vector", function (r) {
+		var id= r.id;
+		var vector = r.vector;
+		var item = treeView.findItem(id);
+		item.moveItem(vector);
+		contentsMain.moveVector(id, vector);
+		Contents.selectContents(id);
+	});
+
+
 
 	Contents.addEvent("delete",function(r){
 		var ids = r.ids;

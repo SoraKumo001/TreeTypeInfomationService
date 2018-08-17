@@ -212,10 +212,8 @@
 	display: flex;
 	flex: 1;
 }
-.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeCell{
-	display: flex;
-	vertical-align: middle;
-	overflow: hidden;
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeChild{
+	flex: 1;
 }
 
 .GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeBody{

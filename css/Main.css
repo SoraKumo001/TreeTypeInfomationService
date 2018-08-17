@@ -159,6 +159,7 @@ div.TreeOption span:hover{
 }
 
 .ContentsArea{
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	padding-left: 1em;

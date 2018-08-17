@@ -987,6 +987,31 @@
 		var win = GUI.createWindow();
 		win.getClient().classList.add("GUITreeView");
 		win.treeSelect = null;
+		win.treeDrag = null;
+		win.treeDragX;
+		win.treeDragY;
+
+		//ドラッグ関係イベント処理
+		document.addEventListener('mouseup', function () {
+			win.treeDrag = null;
+		});
+		document.addEventListener('mousemove', function () {
+			if (win.treeDrag) {
+				var x = win.treeDragX - GUI.getMouseX();
+				var y = win.treeDragY - GUI.getMouseY();
+				var l = x * x + y * y;
+				if (l >= 8 * 8) {
+					var node = GUI.createMoveNode(GUI.mouseX, GUI.mouseY);
+					var drag = win.treeDrag;
+					win.treeDrag = null;
+					node.addEvent("drag", function (e) {
+						e.etype = "itemDrag";
+						win.callEvent({ etype: "itemDrag", item: drag });
+					});
+				}
+			}
+		});
+
 		function createItem(value){
 			var html =
 				"<div class='GUITreeRow'>"+
@@ -1050,6 +1075,15 @@
 				e.item = win.GUI.hoverItem;
 				win.callEvent(e);
 				win.GUI.hoverItem = null;
+			});
+
+			//ドラッグ処理準備
+			item.addEventListener("mousedown", function(){
+				if (win.getSelectItem() == this){
+					win.treeDrag = this;
+					win.treeDragX = GUI.getMouseX();
+					win.treeDragY = GUI.getMouseY();
+				}
 			});
 
 			item.setItemValue = function(value){
@@ -1166,6 +1200,7 @@
 					}
 				}
 			}
+
 			return item;
 		}
 		var client = win.GUI.parts.GUIClient;
@@ -2086,7 +2121,7 @@
 		}
 		document.addEventListener("mouseup",onMouseUp);
 		document.addEventListener("mousemove",onMouseMove);
-
+		node.setPos(x,y);
 		document.body.appendChild(node);
 		return node;
 	}

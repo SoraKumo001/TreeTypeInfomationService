@@ -234,7 +234,7 @@ class Contents{
 		Self::updatePriority($pid);
 		return ["pid"=>$pid,"id"=>$cid];
 	}
-	public static function JS_moveContents($id,$vector)
+	public static function JS_moveVector($id,$vector)
 	{
 		if (!MG::isAdmin())
 			return null;
@@ -352,6 +352,27 @@ class Contents{
 			$id = $value['pid'];
 		}
 		return $id;
+	}
+	public static function getParent($id){
+		MG::DB()->get("select contents_parent from contents where contents_id = ?",$id);
+	}
+	public static function isParent($id,$checkId){
+		if($id === $checkId)
+			return true;
+		while($id = Self::getParent($id)){
+			if ($id === $checkId)
+				return true;
+		}
+		return false;
+	}
+	public static function JS_moveContents($fromId,$toId){
+		//移動先が子だったら処理を行わない
+		if(Self::isParent($toId,$fromId))
+			return false;
+		//親の組み替え
+		$flag = MG::DB()->exec("update contents set contents_parent=?,contents_priority=100000 where contents_id=?", $toId, $fromId) === 1;
+		Self::updatePriority($toId);
+		return $flag;
 	}
 	public static function getDeeps($id)
 	{

@@ -28,7 +28,9 @@ function createContentsView(){
 	client.appendChild(page);
 	win.loadContents = function(id){
 		if (Contents.nodes[id]){
-			scrollTo(client, Contents.nodes[id].offsetTop);
+			node = Contents.nodes[id];
+			var y = node.getBoundingClientRect().top - page.getBoundingClientRect().top;
+			scrollTo(client, y);
 			return;
 		}
 		ADP.exec("Contents.getContentsPage",id).on=function(value){
@@ -42,7 +44,7 @@ function createContentsView(){
 			page.appendChild(createContents(value));
 		}
 	}
-	win.moveContents = function (id, vector){
+	win.moveVector = function (id, vector){
 		var node = Contents.nodes[id];
 		if(node == null)
 			return;
@@ -160,10 +162,10 @@ function createControlPanel(id){
 			Contents.createContentsMenu(id, 'TEXT', this);
 			break;
 		case 2:
-			Contents.moveContents(id, -1);
+			Contents.moveVector(id, -1);
 			break;
 		case 3:
-			Contents.moveContents(id, 1);
+			Contents.moveVector(id, 1);
 			break;
 		}
 	}
