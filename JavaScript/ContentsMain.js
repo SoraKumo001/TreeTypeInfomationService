@@ -20,6 +20,14 @@ function scrollTo(node,pos){
 
 
 function createContentsView(){
+	function jumpContents(id) {
+		if (Contents.nodes[id]) {
+			node = Contents.nodes[id];
+			var y = node.getBoundingClientRect().top - page.getBoundingClientRect().top;
+			scrollTo(client, y);
+		}
+	}
+
 	var win = GUI.createWindow();
 	var client = win.getClient();
 	client.style = "overflow:auto;";
@@ -27,12 +35,12 @@ function createContentsView(){
 	page.className = "ContentsPage";
 	client.appendChild(page);
 	win.loadContents = function(id){
+		//コンテンツが存在するなら移動して終了
 		if (Contents.nodes[id]){
-			node = Contents.nodes[id];
-			var y = node.getBoundingClientRect().top - page.getBoundingClientRect().top;
-			scrollTo(client, y);
+			jumpContents(id);
 			return;
 		}
+
 		ADP.exec("Contents.getContentsPage",id).on=function(value){
 			win.removeChildAll();
 			if(value === null)
@@ -42,6 +50,7 @@ function createContentsView(){
 			while (page.childNodes.length)
 				page.removeChild(page.childNodes[0]);
 			page.appendChild(createContents(value));
+			jumpContents(id);
 		}
 	}
 	win.moveVector = function (id, vector){

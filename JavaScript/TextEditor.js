@@ -239,7 +239,16 @@ function createTextEditor(){
 			//insertImage(e.clipboardData.files);
 		}else{
 			var text = e.clipboardData.getData("text/plain");
-			win.sendCommand("insertText", false, text);
+			//text = text.replace(/\t/g,'    ');
+
+			var text = text.replace(
+				/(["&'<>\n\t ])/g,
+				function( ch )
+				{ return {
+					'"':'&quot;', '&':'&amp;', '\'':'&#39;', '<':'&lt;', '>':'&gt;','\n':'<br>',
+					' ':'&nbsp;','\t':'&nbsp;&nbsp;&nbsp;&nbsp;' }[ ch ]; });
+			//win.sendCommand("insertText", false, text);
+			win.sendCommand("insertHtml", false, text);
 
 		}
 		e.preventDefault();
