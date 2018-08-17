@@ -2,7 +2,7 @@
 require_once("PHP/Manager.php");
 
 function isBot(){
-//	return true;
+	return true;
 	$agent = $_SERVER['HTTP_USER_AGENT'];
 	if (stripos($agent, "bot") !== false)
 		return true;

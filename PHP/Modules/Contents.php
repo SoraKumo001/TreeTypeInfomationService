@@ -354,7 +354,7 @@ class Contents{
 		return $id;
 	}
 	public static function getParent($id){
-		MG::DB()->get("select contents_parent from contents where contents_id = ?",$id);
+		return MG::DB()->get("select contents_parent from contents where contents_id = ?",$id);
 	}
 	public static function isParent($id,$checkId){
 		if($id === $checkId)
@@ -394,14 +394,36 @@ class Contents{
 		$contents = Self::JS_getContentsPage($id);
 		if($contents === null)
 			return;
+
+		$parents[] = $contents;
+		$pid = $contents["pid"];
+		while(true){
+			$value = MG::DB()->gets("select contents_id as id,contents_parent as pid,contents_title as title from contents where contents_id=?",$pid);
+			if(!$value)
+				break;
+			$pid = $value["pid"];
+			$parents[] = $value;
+		}
+
 		$title = Params::getParam("Global_base_title", "");
 		printf(
 			"<!DOCTYPE html>\n<html>\n\t<head>\n\t<meta charset=\"UTF-8\"/>\n" .
 				"\t<link rel=\"alternate\" type=\"application/rss+xml\" href=\"?command=Contents.getRss\" title=\"RSS2.0\" />\n" .
-				"<title>%s</title>" .
+				"\t<title>%s</title>\n" .
 				"</head>\n<body>\n",
 			htmlspecialchars($contents["title"]." ～ ".$title)
 		);
+		//パンくずリスト
+		echo "<ul class=\"breadcrumb\">\n";
+		foreach(array_reverse($parents) as $parent){
+			printf(
+				"\t<li itemscope=\"itemscope\" itemtype=\"http://data-vocabulary.org/Breadcrumb\">\n".
+				"\t\t<a href=\"?p=%d\" itemprop=\"url\">\n".
+				"\t\t\t<span itemprop=\"title\">%s</span>\n\t\t</a>\n\t</li>\n",
+				$parent["id"],
+				htmlspecialchars($parent["title"]));
+		}
+		echo "</ul>\n\n";
 
 		Self::outputContents($contents);
 		echo "</body>\n</html>\n";
