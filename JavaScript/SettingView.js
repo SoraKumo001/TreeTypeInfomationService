@@ -43,38 +43,34 @@ function createBaseSetView(parent) {
 	list.addItem("URL");
 	list.addItem("タイトル");
 	list.addItem("説明");
+	list.addItem("アナリティクスID");
 
-	var label = ["base_url", "base_title", "base_info"];
+	var label = ["base_url", "base_title", "base_info", "base_analytics"];
 
 	list.addEvent("itemClick", function (e) {
 		var index = e.itemIndex;
 		var subIndex = e.itemSubIndex;
 		if (subIndex != 1)
 			return;
-		var area = this.getItemArea(index, subIndex);
-		switch (index) {
-			case 0:
-			case 1:
-			case 2:
-				var edit = list.editText(index, subIndex);
-				edit.addEvent("enter", function (e) {
-					ADP.exec("GParams.setParam", label[index], e.value).on =
-						function (flag) {
-							if (flag) {
-								Contents.loadTitle();
-								list.setItem(index, subIndex, e.value);
-							}
-						}
-				});
-		}
+
+		var edit = list.editText(index, subIndex);
+		edit.addEvent("enter", function (e) {
+			ADP.exec("Params.setParam", label[index], e.value).on =
+				function (flag) {
+					if (flag) {
+						Contents.loadTitle();
+						list.setItem(index, subIndex, e.value);
+					}
+				}
+		});
+
 	});
 
 	list.load = function () {
-		ADP.exec("GParams.getParams", label).on = function (values) {
+		ADP.exec("Params.getParams", label).on = function (values) {
 			if (values){
-				list.setItem(0, 1, values[label[0]]);
-				list.setItem(1, 1, values[label[1]]);
-				list.setItem(2, 1, values[label[2]]);
+				for (var i = 0; i < label.length;i++)
+					list.setItem(i, 1, values[label[i]]);
 			}
 		}
 	}

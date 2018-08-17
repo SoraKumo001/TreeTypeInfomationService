@@ -254,9 +254,9 @@ class Contents{
 		date_default_timezone_set("UTC");
 		$values = MG::DB()->queryData("select contents_id as id,contents_date as date,contents_title as title,contents_value as value from contents where contents_stat=1 and contents_type='PAGE' order by contents_date desc");
 
-		$url = GParams::getParam("Global_base_url", "");
-		$title = GParams::getParam("Global_base_title", "タイトル");
-		$info = GParams::getParam("Global_base_info", "");
+		$url = Params::getParam("Global_base_url", "");
+		$title = Params::getParam("Global_base_title", "タイトル");
+		$info = Params::getParam("Global_base_info", "");
 
 		header('Content-Type: text/xml; charset=utf-8', true);
 		$rss = new SimpleXMLElement('<rss/>');

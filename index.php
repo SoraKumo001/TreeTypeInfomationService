@@ -12,6 +12,19 @@ function outputFile($fileName){
 			$scripts .= "\t<script type='text/javascript' src='JavaScript/$file'></script>\n";
 		}
 	}
+	$analytics = Params::getParam("Global_base_analytics", "");
+	if($analytics!=""){
+		$scripts .= sprintf(
+			"\t<script async src=\" https ://www.googletagmanager.com/gtag/js?id=%s\"></script>\n".
+			"\t<script>\n".
+			"\t\twindow.dataLayer = window.dataLayer || [];\n".
+			"\t\tfunction gtag() { dataLayer.push(arguments); }\n".
+			"\t\tgtag('js', new Date());\n".
+			"\t\tgtag('config', '%s');\n".
+			"\t</script>",
+			$analytics, $analytics);
+	}
+
 	//圧縮
 	ob_start("ob_gzhandler");
 	// Last-modified と ETag 生成

@@ -30,7 +30,7 @@ Contents.createContents = function(pid,vector,type){
 	}
 }
 Contents.loadTitle = function(){
-	ADP.exec("GParams.getParam", "base_title").on = function (value) {
+	ADP.exec("Params.getParam", "base_title").on = function (value) {
 		System.title = value;
 		Contents.callEvent({etype:"title",title:value});
 	}
@@ -146,7 +146,7 @@ function createContensView(mainView){
 	//管理者用編集メニュー
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){
 		var mOptionNode = document.createElement("div");
-		mOptionNode.innerHTML = "<span>🖊</span><span>🔧</span><span>🔺</span><span>🔻</span>";
+		mOptionNode.innerHTML = "<span></span><span></span><span></span><span></span>";
 		mOptionNode.className = "TreeOption";
 		var options = mOptionNode.querySelectorAll("span");
 		options.forEach(o => {
@@ -154,16 +154,16 @@ function createContensView(mainView){
 				var id = this.parentNode.item.getItemValue();
 				var vector = 2;
 				switch (this.textContent){
-					case '🔺':
+					case '':
 						Contents.moveContents(id, -1);
 						break;
-					case '🔻':
+					case '':
 						Contents.moveContents(id, 1);
 						break;
-					case '🖊':
+					case '':
 						Contents.createContentsMenu(id, "PAGE", this);
 						break;
-					case '🔧':
+					case '':
 						Contents.createContentsMenu2(id, this);
 						break;
 				}

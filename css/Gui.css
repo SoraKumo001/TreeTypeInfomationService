@@ -230,10 +230,13 @@
 }
 @keyframes treeClose {
 	0%	{margin-top:0;opacity: 0.6;}
-	100%{margin-top:-2em;opacity: 0;visibility:hidden;position: absolute;}
+	90%	{margin-top:-2em;opacity: 0.6;}
+	100%{margin-top:-100%;transform:scaleY(0);opacity: 0;visibility:hidden;}
 }
-
-.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow:nth-child(2) > .GUITreeChild{
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow:nth-child(2) > .GUITreeChild {
+	overflow: hidden;
+}
+.GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow:nth-child(2) > .GUITreeChild .GUITreeItem{
 	padding-left: 1em;
 	flex: 1;
 }
@@ -241,8 +244,9 @@
 .GUIArea .GUIWindow .GUIClient .GUITreeItem#open > .GUITreeRow:nth-child(2) > .GUITreeChild > .GUITreeItem{
 	animation: treeOpen 0.3s ease 0s 1 normal;
 }
-.GUIArea .GUIWindow .GUIClient .GUITreeItem#close > .GUITreeRow:nth-child(2) > .GUITreeChild > .GUITreeItem{
-	animation: treeClose 0.8s ease 0s 1 forwards;
+
+.GUIArea .GUIWindow .GUIClient .GUITreeItem#close > .GUITreeRow:nth-child(2) > .GUITreeChild {
+	animation: treeClose 0.8s linear 0s 1 forwards;
 }
 */
 .GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeIcon{
