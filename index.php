@@ -15,7 +15,7 @@ function outputFile($fileName){
 	$analytics = Params::getParam("Global_base_analytics", "");
 	if($analytics!=""){
 		$scripts .= sprintf(
-			"\t<script async src=\" https ://www.googletagmanager.com/gtag/js?id=%s\"></script>\n".
+			"\t<script async src=\" https://www.googletagmanager.com/gtag/js?id=%s\"></script>\n".
 			"\t<script>\n".
 			"\t\twindow.dataLayer = window.dataLayer || [];\n".
 			"\t\tfunction gtag() { dataLayer.push(arguments); }\n".
