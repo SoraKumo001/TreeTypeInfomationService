@@ -128,8 +128,9 @@ function createContents(value){
 					window.open(this.src, 'newtab');
 				}
 			});
-			//ソースコードのハイライト
-			//hljs.configure({ useBR: false });
+			hljs.configure({
+				tabReplace: "    ",
+			});
 			var nodes = body.querySelectorAll("code");
 			for (var index = 0; nodes[index]; index++) {
 				var node = nodes[index];
