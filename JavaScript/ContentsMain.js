@@ -5,6 +5,9 @@ function scrollTo(node,pos){
 	pos -= 20;
 	if(pos < 0)
 		pos = 0;
+	var limit = node.scrollHeight -node.clientHeight;
+	if (pos > limit)
+		pos = limit;
 	this.handle = setInterval(function(){
 		var p = pos - node.scrollTop;
 		if(Math.abs(p) < 5){
