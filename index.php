@@ -26,10 +26,11 @@ function outputFile($fileName){
 		$scripts .= sprintf(
 			"\t<script async src=\" https://www.googletagmanager.com/gtag/js?id=%s\"></script>\n".
 			"\t<script>\n".
+			"\t\tAnalyticsUA = '%s';\n".
 			"\t\twindow.dataLayer = window.dataLayer || [];\n".
 			"\t\tfunction gtag() { dataLayer.push(arguments); }\n".
 			"\t\tgtag('js', new Date());\n".
-			"\t\tgtag('config', '%s');\n".
+			"\t\tgtag('config', AnalyticsUA);\n".
 			"\t</script>",
 			$analytics, $analytics);
 	}

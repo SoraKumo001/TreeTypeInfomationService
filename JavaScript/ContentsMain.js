@@ -54,6 +54,11 @@ function createContentsView(){
 				page.removeChild(page.childNodes[0]);
 			page.appendChild(createContents(value));
 			jumpContents(id);
+
+			//トラッカーに通知
+			try {
+				gtag('config', AnalyticsUA, { 'page_title': value["title"], 'page_path': '/?id=' + value["id"] });
+			} catch (e) { }
 		}
 	}
 	win.moveVector = function (id, vector){
