@@ -143,6 +143,14 @@ function createContensView(mainView){
 		do{
 			item.openItem(true);
 		}while(item = item.getParentItem());
+
+		//タイトル設定
+		item = treeView.getSelectItem();
+		var title = item.getItemText();
+		while (item = item.getParentItem()) {
+			title += " ～ " + item.getItemText();
+		}
+		document.title = title + " ～ " + System.title;
 		//コンテンツの読み出し
 		contentsMain.loadContents(id);
 	});
@@ -239,6 +247,7 @@ function createContensView(mainView){
 		if (item) {
 			item.select();
 			item.openItem(true);
+
 		}
 	});
 	Contents.addEvent("update", function (r) {
@@ -254,7 +263,11 @@ function createContensView(mainView){
 			}
 		}
 	});
-
+	Contents.addEvent("loadTree", function (r) {
+		treeView.clearItem();
+		setTreeItem(treeView.getRootItem(), r.value);
+		goLocation();
+	});
 	treeView.loadTree = function(){
 		Contents.nodes = [];
 		ADP.exec("Contents.getTree").on = function(value){
@@ -276,11 +289,7 @@ function createContensView(mainView){
 			}
 		}
 	}
-	Contents.addEvent("loadTree",function(r){
-		treeView.clearItem();
-		setTreeItem(treeView.getRootItem(), r.value);
-		goLocation();
-	});
+
 	Contents.loadTree();
 	return separate;
 }

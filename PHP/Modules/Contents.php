@@ -250,7 +250,25 @@ class Contents{
 	public static function JS_getRss()
 	{
 		date_default_timezone_set("UTC");
-		$values = MG::DB()->queryData("select contents_id as id,contents_date as date,contents_title as title,contents_value as value from contents where contents_stat=1 and contents_type='PAGE' order by contents_date desc");
+
+		//ツリー構造に必要なデータを抽出
+		$values = MG::DB()->queryData(
+			"select contents_id as id,contents_parent as pid,contents_stat as stat,contents_date as date,
+			contents_type as type,contents_title as title,contents_value as value from contents where contents_stat=1 order by contents_type='PAGE',contents_priority"
+		);
+		if ($values === null)
+			return null;
+		//ID参照用データの作成
+		foreach ($values as &$value) {
+			$items[$value["id"]] = &$value;
+		}
+		//親子関係の作成
+		foreach ($items as &$item) {
+			if ($item["pid"] !== null && isset($items[$item["pid"]])) {
+				$parent = &$items[$item["pid"]];
+				$parent["childs"][] = &$item;
+			}
+		}
 
 		$url = Params::getParam("Global_base_url", "");
 		$title = Params::getParam("Global_base_title", "タイトル");
@@ -266,22 +284,42 @@ class Contents{
 		$link = $channel->addChild('link', $url);
 		$language = $channel->addChild('language', 'ja-jp');
 
-		foreach ($values as $value) {
+		foreach ($items as &$value) {
+			if($value["type"] !== 'PAGE')
+				continue;
+			$title2 = $value["title"];
+			$parent = &$value;
+			while($parent["pid"] && $parent = &$items[$parent["pid"]]){
+				$title2 .= " ～ ". $parent["title"];
+			}
+
 			$msg = strip_tags($value["value"]);
 			$msg = str_replace("&nbsp;", "&#160;", $msg);
 			$msg = str_replace("&amp;", "&#38;", $msg);
 			$item = $channel->addChild("item");
-			$item->addChild("title", $value["title"]);
+			$item->addChild("title", $title2." ～ ".$title);
 			$item->addChild('description', $msg);
 			$item->addChild(
 				"link",
 				sprintf("%s?p=%d", $url, $value["id"])
 			);
-			$item->addChild("pubDate", date("r", strtotime($value["date"])));
+
+			$item->addChild("pubDate", date("r", strtotime(Self::getMaxDate($value))));
 		}
 		ob_start("ob_gzhandler");
 		echo $rss->asXML();
 		exit(0);
+	}
+	private static function getMaxDate($value,$date=null){
+		if($date === null || $value["date"] > $date){
+			$date = $value["date"];
+		}
+		if(isset($value["childs"])){
+			foreach($value["childs"] as $child){
+				$date = Self::getMaxDate($child,$date);
+			}
+		}
+		return $date;
 	}
 	public static function getContentsParent($id)
 	{
@@ -403,14 +441,15 @@ class Contents{
 			$parents[] = $value;
 		}
 
-		$title = Params::getParam("Global_base_title", "");
+		$title = htmlspecialchars(Params::getParam("Global_base_title", ""));
+		foreach (array_reverse($parents) as $parent){
+			$title = htmlspecialchars($parent["title"]) . " ～ " . $title;
+		}
 		printf(
 			"<!DOCTYPE html>\n<html>\n\t<head>\n\t<meta charset=\"UTF-8\"/>\n" .
 				"\t<link rel=\"alternate\" type=\"application/rss+xml\" href=\"?command=Contents.getRss\" title=\"RSS2.0\" />\n" .
 				"\t<title>%s</title>\n" .
-				"</head>\n<body>\n",
-			htmlspecialchars($contents["title"]." ～ ".$title)
-		);
+				"</head>\n<body>\n",$title);
 		//パンくずリスト
 		echo "<ul class=\"breadcrumb\">\n";
 		foreach(array_reverse($parents) as $parent){

@@ -48,7 +48,7 @@ function createContentsView(){
 			win.removeChildAll();
 			if(value === null)
 				return;
-			document.title = value["title"] + " ～ " + System.title;
+			//document.title = value["title"] + " ～ " + System.title;
 			Contents.nodes = [];
 			while (page.childNodes.length)
 				page.removeChild(page.childNodes[0]);
