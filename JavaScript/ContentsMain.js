@@ -148,14 +148,13 @@ function createContents(value){
 			hljs.configure({
 				tabReplace: "    ",
 			});
-			var nodes = body.querySelectorAll("code");
+			var nodes = body.querySelectorAll(".code");
 			for (var index = 0; nodes[index]; index++) {
 				var node = nodes[index];
 				//node.className = "";
 				node.style.padding = "3px";
 				node.style.maxWidth = "100%";
 				node.style.display = "inline-block";
-				node.style.whiteSpace = "pre";
 				//node.style.overflow = "auto";
 
 				hljs.highlightBlock(node);

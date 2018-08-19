@@ -268,8 +268,10 @@ div.Import{
 
 }
 
-code{
+.code{
 	border: dashed rgba(0,0,0,0.05);
 	font-size: 140%;
 	padding: 0.5em !important;
+	word-break: break-all;
+	font-family: Monaco, monospace;
 }
