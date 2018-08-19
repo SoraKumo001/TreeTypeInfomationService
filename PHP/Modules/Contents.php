@@ -39,16 +39,14 @@ class Contents{
 		foreach ($values as &$value) {
 			$id2 = $value["id"];
 			//ファイルデータの読み出し
-			$path = sprintf("/Contents/%04d/%02d", ((int)($id2 / 100)) * 100, $id2 % 100);
+			$path = Self::getDirPath($id2);
 			$fileId = Files::getDirId(1, $path);
 			if ($fileId != null) {
 				$fileList = Files::getChildList($fileId);
 				if(count($fileList)){
-					$f = [];
 					foreach($fileList as $fileId){
-						$f = Files::getFile($fileId[0]);
+						$value["files"][] = Files::getFile($fileId[0]);
 					}
-					$value["files"][]=&$f;
 				}
 			}
 			//ID参照用データの作成

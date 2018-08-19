@@ -147,8 +147,8 @@ div.TreeOption span:hover{
 	background-color: rgba(100,200,200,0.95);
 }
 @keyframes PageShow {
-    0%   {opacity: 0.1;transform: scaleY(0.5);}
-    100% {opacity: 1;transform: scaleY(1.0);}
+    0%   {opacity: 0.1;}
+    100% {opacity: 1;}
 }
 .ContentsPage{
 	position: relative;
@@ -163,7 +163,7 @@ div.TreeOption span:hover{
 	display: flex;
 	flex-direction: column;
 	padding-left: 1em;
-	animation: PageShow 0.2s ease 0s 1 normal;
+	animation: PageShow 0.5s ease 0s 1 normal;
 }
 
 [data-visible="false"] .ContentsArea:not([data-stat="1"]){
