@@ -115,7 +115,6 @@ function createContents(value){
 		contents.appendChild(createControlPanel(value["id"]));
 
 	var title = document.createElement('div');
-	title.className = "Title" + value["title_type"];
 	contents.appendChild(title);
 
 	var date = document.createElement('div');
@@ -137,6 +136,7 @@ function createContents(value){
 	area.updateContents = function(value){
 		if (area.dataset.type === value["type"]){
 			area.dataset.stat = value["stat"];
+			title.className = "Title" + value["title_type"];
 			title.textContent = value["title"];
 			date.textContent = (new Date(value["date"])).toLocaleString();
 			body.innerHTML = value["value"];
