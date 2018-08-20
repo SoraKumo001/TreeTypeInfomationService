@@ -161,7 +161,7 @@ function createContensView(mainView){
 		mOptionNode.innerHTML = "<span>🖊</span><span>🔧</span><span>🔺</span><span>🔻</span>";
 		mOptionNode.className = "TreeOption";
 		var options = mOptionNode.querySelectorAll("span");
-		options.forEach(o => {
+		options.forEach(function(o){
 			o.addEventListener("click", function (e) {
 				var id = this.parentNode.item.getItemValue();
 				var vector = 2;

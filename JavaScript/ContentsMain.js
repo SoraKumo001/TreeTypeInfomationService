@@ -140,11 +140,13 @@ function createContents(value){
 			title.textContent = value["title"];
 			date.textContent = (new Date(value["date"])).toLocaleString();
 			body.innerHTML = value["value"];
-			body.querySelectorAll("img").forEach(function(node){
+			var nodes = body.querySelectorAll("img");
+			for(var i=0;i<nodes.length;i++){
+				node = nodes[i];
 				node.onclick = function(){
 					window.open(this.src, 'newtab');
 				}
-			});
+			}
 			hljs.configure({
 				tabReplace: "    ",
 			});

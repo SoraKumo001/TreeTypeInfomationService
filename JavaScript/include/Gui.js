@@ -1047,10 +1047,12 @@
 				else{
 					item.id=item.GUI.opend?"open":"close";
 					if (item.GUI.opend){
-						item.querySelectorAll(".GUITreeItem#open > .GUITreeRow:nth-child(2) > .GUITreeChild > .GUITreeItem").forEach(function (n) {
+						var items = item.querySelectorAll(".GUITreeItem#open > .GUITreeRow:nth-child(2) > .GUITreeChild > .GUITreeItem");
+						for(var i=0;i<items.length;i++){
+							var n = items[i];
 							n.style.animation = "treeOpen 0.3s ease 0s 1 normal";
 							n.style.display = 'block';
-						});
+						}
 					}else{
 						item.treeChild.querySelectorAll(".GUITreeItem").forEach(function (n) {
 							n.style.animation = "treeClose 0.8s ease 0s 1 forwards";
