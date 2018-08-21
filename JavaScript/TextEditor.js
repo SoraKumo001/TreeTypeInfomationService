@@ -168,7 +168,7 @@ function createTextEditor(){
 	var iframe = document.createElement("iframe");
 	client0.appendChild(iframe);
 	iframe.contentDocument.head.innerHTML =
-		"<style>body{word-break: break-all;}.code{font-family: Monaco, monospace;display:inline-block;background-color:#dddddd;}</style>";
+		"<style>body{word-break: break-all;}.code,.code2{font-family: monospace;display:inline-block;background-color:#dddddd;}</style>";
 	iframe.contentDocument.body.contentEditable = "true";
 	var mHtml = iframe.contentDocument.body;
 

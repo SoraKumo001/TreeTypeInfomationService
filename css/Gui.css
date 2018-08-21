@@ -210,7 +210,6 @@
 }
 .GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow{
 	display: flex;
-	flex: 1;
 }
 .GUIArea .GUIWindow .GUIClient .GUITreeItem > .GUITreeRow > .GUITreeChild{
 	flex: 1;

@@ -161,7 +161,8 @@ function createContensView(mainView){
 		mOptionNode.innerHTML = "<span>🖊</span><span>🔧</span><span>🔺</span><span>🔻</span>";
 		mOptionNode.className = "TreeOption";
 		var options = mOptionNode.querySelectorAll("span");
-		options.forEach(function(o){
+		for(var i=0;i<options.length;i++){
+			var o = options[i];
 			o.addEventListener("click", function (e) {
 				var id = this.parentNode.item.getItemValue();
 				var vector = 2;
@@ -182,7 +183,7 @@ function createContensView(mainView){
 				e.preventDefault();
 				//
 			});
-		});
+		};
 		treeView.addEvent("itemOver", function (e) {
 			var item = e.item;
 			if (mOptionNode.parentNode != item.treeRow && mOptionNode.parentNode) {

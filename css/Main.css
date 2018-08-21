@@ -1,3 +1,6 @@
+body{
+	font-family: Arial, Helvetica, sans-serif;
+}
 .LayoutTop{
 	display: flex;
 	align-items: center;
@@ -5,7 +8,8 @@
 	align-items: center;
 }
 .LayoutTop div:first-child{
-	font-size: 200%;
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	font-size: 250%;
 	color: white;
 	margin-left: 1em;
 	flex: 1;
@@ -268,10 +272,11 @@ div.Import{
 
 }
 
-.code{
+.code,.code2{
+	display: inline-block;
 	border: dashed rgba(0,0,0,0.05);
-	font-size: 140%;
+	font-size: 120%;
 	padding: 0.5em !important;
 	word-break: break-all;
-	font-family: Monaco, monospace;
+	font-family: MeiryoKe_Gothic, "Ricty Diminished", "Osaka－等幅", "Osaka-等幅", Osaka-mono, "ＭＳ ゴシック", "MS Gothic", "Courier New", Courier, Monaco, Menlo, Consolas, "Lucida Console", monospace;
 }
