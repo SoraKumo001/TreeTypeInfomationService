@@ -147,19 +147,36 @@ function createContents(value){
 					window.open(this.src, 'newtab');
 				}
 			}
-			hljs.configure({
-				tabReplace: "    ",
-			});
 			var nodes = body.querySelectorAll(".code");
 			for (var index = 0; nodes[index]; index++) {
 				var node = nodes[index];
-				//node.className = "";
-				node.style.padding = "3px";
-				node.style.maxWidth = "100%";
-				node.style.display = "inline-block";
-				//node.style.overflow = "auto";
-
 				hljs.highlightBlock(node);
+			}
+			var nodes = body.querySelectorAll(".update");
+			for (var index = 0; nodes[index]; index++) {
+				var node = nodes[index];
+				checkUpdate(node);
+			}
+		}
+	}
+	function checkUpdate(node){
+		ADP.exec("Contents.checkUpdate",10).on = function(values){
+			if(!values)
+				return;
+			for(var i=0;i<values.length;i++){
+				var value = values[i];
+				var div = document.createElement("div");
+				var span = document.createElement("span");
+				span.innerText = (new Date(value["date"])).toLocaleString();
+				div.appendChild(span);
+				var span = document.createElement("span");
+				span.innerText = value["title2"];
+				div.appendChild(span);
+				node.appendChild(div);
+				div.dataset.id = value["id"];
+				div.onclick = function(){
+					Contents.selectContents(this.dataset.id);
+				}
 			}
 		}
 	}

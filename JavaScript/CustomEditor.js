@@ -133,7 +133,7 @@ function createCustomEditor(id) {
 
 	var TITLE_TYPE = ["表示無", "表示大", "表示中", "表示小"];
 	var STAT_TYPE = ["仮状態","非表示","表示"];
-	var PAGE_TYPE = ["PAGE","TEXT"];
+	var PAGE_TYPE = ["PAGE","TEXT","UPDATE"];
 	var mValue;
 	var editor = createTextEditor();	//テキストエディタの作成
 	editor.setSize(1000, 600);			//サイズの指定

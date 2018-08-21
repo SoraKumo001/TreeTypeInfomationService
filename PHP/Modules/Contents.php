@@ -245,13 +245,21 @@ class Contents{
 		$priority2 = Self::getContentsPriority($id);
 		return $priority !== $priority2;
 	}
-
-	public static function JS_getRss()
-	{
+	public static function JS_checkUpdate($limit=10){
+		$pages = Self::getPages();
+		$pages = array_slice($pages,0,$limit);
+		//不要データの削除
+		foreach($pages as &$value){
+			unset($value["parent"]);
+			unset($value["childs"]);
+		}
+		return $pages;
+	}
+	public static function getPages(){
 		//ツリー構造に必要なデータを抽出
 		$values = MG::DB()->queryData(
 			"select contents_id as id,contents_parent as pid,contents_stat as stat,to_char(contents_date at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') as date,
-			contents_type as type,contents_title as title,contents_value as value from contents where contents_stat=1 order by contents_type='PAGE',contents_priority"
+			contents_type as type,contents_title as title,contents_value as value from contents where contents_stat=1"
 		);
 		if ($values === null)
 			return null;
@@ -264,9 +272,47 @@ class Contents{
 			if ($item["pid"] !== null && isset($items[$item["pid"]])) {
 				$parent = &$items[$item["pid"]];
 				$parent["childs"][] = &$item;
+				$item["parent"] = &$parent;
 			}
 		}
 
+		$pages = [];
+		foreach ($items as &$value) {
+			if($value["type"] !== 'PAGE')
+				continue;
+			//作成日を調整
+			$value["date"] = Self::getMaxDate($value);
+			//タイトルの調整
+			$title = $value["title"];
+			$p = $value;
+			while(isset($p["parent"]) && $p = $p["parent"]){
+				$title .= " ～ ". $p["title"];
+			}
+			$value["title2"] = $title;
+			$pages[] = $value;
+		}
+
+		//日付でソート
+		usort($pages, function($a,$b){
+			return $a['date'] < $b['date'];
+		});
+
+		return $pages;
+
+	}
+	private static function getMaxDate($value,$date=null){
+		if($date === null || $value["date"] > $date){
+			$date = $value["date"];
+		}
+		if(isset($value["childs"])){
+			foreach($value["childs"] as $child){
+				$date = Self::getMaxDate($child,$date);
+			}
+		}
+		return $date;
+	}
+	public static function JS_getRss()
+	{
 		$url = Params::getParam("Global_base_url", "");
 		$title = Params::getParam("Global_base_title", "タイトル");
 		$info = Params::getParam("Global_base_info", "");
@@ -281,12 +327,12 @@ class Contents{
 		$link = $channel->addChild('link', $url);
 		$language = $channel->addChild('language', 'ja-jp');
 
-		foreach ($items as &$value) {
-			if($value["type"] !== 'PAGE')
-				continue;
+		$pages = Self::getPages();
+
+		foreach ($pages as $value) {
 			$title2 = $value["title"];
-			$parent = &$value;
-			while($parent["pid"] && $parent = &$items[$parent["pid"]]){
+			$parent = $value;
+			while(isset($parent["parent"]) && $parent = $parent["parent"]){
 				$title2 .= " ～ ". $parent["title"];
 			}
 
@@ -301,23 +347,13 @@ class Contents{
 				sprintf("%s?p=%d", $url, $value["id"])
 			);
 
-			$item->addChild("pubDate", date("r", strtotime(Self::getMaxDate($value))));
+			$item->addChild("pubDate", date("r", strtotime($value["date"])));
 		}
 		ob_start("ob_gzhandler");
 		echo $rss->asXML();
 		exit(0);
 	}
-	private static function getMaxDate($value,$date=null){
-		if($date === null || $value["date"] > $date){
-			$date = $value["date"];
-		}
-		if(isset($value["childs"])){
-			foreach($value["childs"] as $child){
-				$date = Self::getMaxDate($child,$date);
-			}
-		}
-		return $date;
-	}
+
 	public static function getContentsParent($id)
 	{
 		return MG::DB()->get("select contents_parent from contents where contents_id=?", $id);

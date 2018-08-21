@@ -280,3 +280,21 @@ div.Import{
 	word-break: break-all;
 	font-family: MeiryoKe_Gothic, "Ricty Diminished", "Osaka－等幅", "Osaka-等幅", Osaka-mono, "ＭＳ ゴシック", "MS Gothic", "Courier New", Courier, Monaco, Menlo, Consolas, "Lucida Console", monospace;
 }
+
+.update{
+	display: inline-block;
+	padding: 0.5em !important;
+}
+.update div{
+	cursor: pointer;
+	margin: 0.4em;
+}
+.update div:hover{
+	cursor: pointer;
+	background-color: aliceblue;
+}
+.update span{
+	margin: 0.2em;
+	padding: 0.2em;
+	border-bottom: dashed rgba(0,0,0,0.05);
+}
