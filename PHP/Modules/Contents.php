@@ -301,12 +301,13 @@ class Contents{
 
 	}
 	private static function getMaxDate($value,$date=null){
-		if($date === null || $value["date"] > $date){
+		if($date === null || ($value["type"] !== 'PAGE' && $value["date"] > $date)){
 			$date = $value["date"];
 		}
 		if(isset($value["childs"])){
 			foreach($value["childs"] as $child){
-				$date = Self::getMaxDate($child,$date);
+				if($child["type"] !== 'PAGE')
+					$date = Self::getMaxDate($child,$date);
 			}
 		}
 		return $date;
