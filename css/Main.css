@@ -273,11 +273,13 @@ div.Import{
 }
 
 .code,.code2{
+	overflow: auto;
 	display: inline-block;
 	border: dashed rgba(0,0,0,0.05);
-	font-size: 120%;
+	font-size: 110%;
+	font-weight: bold;
 	padding: 0.5em !important;
-	word-break: break-all;
+	white-space: nowrap;
 	font-family: MeiryoKe_Gothic, "Ricty Diminished", "Osaka－等幅", "Osaka-等幅", Osaka-mono, "ＭＳ ゴシック", "MS Gothic", "Courier New", Courier, Monaco, Menlo, Consolas, "Lucida Console", monospace;
 }
 
