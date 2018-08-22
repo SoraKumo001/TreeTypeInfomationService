@@ -122,7 +122,7 @@ class Contents{
 			}
 			foreach($ids as $srcId => $destId){
 				$convertSrc[] = sprintf('/src="\?command=Files\.download&amp;id=%d"/',$srcId);
-				$convertDest[] = sprintf('/src="?command=Files.download&amp;id=%d"/', $destId);
+				$convertDest[] = sprintf('src="?command=Files.download&amp;id=%d"', $destId);
 			}
 			$value["value"] = preg_replace($convertSrc, $convertDest, $value["value"]);
 			MG::DB()->exec(
@@ -169,7 +169,23 @@ class Contents{
 		if($contents === null)
 			return null;
 		$contents["childs"] = Self::getContentsPageFromParent($pid);
+
+		$images = [];
+		Self::getImages($contents, $images);
+		foreach($images as $id){
+			///header("link: <?command=Files.download&id=$id>;rel=preload;as=image;",false);
+		}
+
 		return $contents;
+	}
+	public static function getImages($contents,&$images){
+		preg_match_all('/<img src="\?command=Files\.download&amp;id=(\d+?)"/', $contents["value"],$ids);
+		$images = array_merge($images, $ids[1]);
+		if (isset($contents["childs"])) {
+			foreach ($contents["childs"] as $child) {
+				Self::getImages($child, $images);
+			}
+		}
 	}
 	public static function JS_getContents($id){
 		$visible = MG::isAdmin() ? "" : "and contents_stat=1";
