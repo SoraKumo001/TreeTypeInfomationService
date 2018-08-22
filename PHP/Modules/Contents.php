@@ -173,7 +173,7 @@ class Contents{
 		$images = [];
 		Self::getImages($contents, $images);
 		foreach($images as $id){
-			///header("link: <?command=Files.download&id=$id>;rel=preload;as=image;",false);
+			header("link: <?command=Files.download&id=$id>;rel=preload;as=image;",false);
 		}
 
 		return $contents;
