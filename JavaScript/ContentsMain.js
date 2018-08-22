@@ -57,7 +57,7 @@ function createContentsView(){
 
 			//トラッカーに通知
 			try {
-				gtag('config', AnalyticsUA, { 'page_title': value["title"], 'page_path': '/?id=' + value["id"] });
+				gtag('config', AnalyticsUA, { 'page_title': value["title"], 'page_path': '/?p=' + value["id"]});
 			} catch (e) { }
 		}
 	}
