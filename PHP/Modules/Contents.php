@@ -481,6 +481,20 @@ class Contents{
 		if($contents === null)
 			return;
 
+		$strAdSense = "";
+		$adsense = Params::getParam("Global_base_adsense", "");
+		if($adsense!=""){
+			$strAdSense = sprintf(
+				"\t<script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script>\n".
+				"\t<script>\n".
+				"\t\t(adsbygoogle = window.adsbygoogle || []).push({\n".
+				"\t\tgoogle_ad_client: \"%s\",\n".
+				"\t\tenable_page_level_ads: true\n".
+				"\t\t});\n".
+				"\t</script>\n",
+				$adsense);
+		}
+
 		$parents[] = $contents;
 		$pid = $contents["pid"];
 		while(true){
@@ -499,6 +513,7 @@ class Contents{
 			"<!DOCTYPE html>\n<html>\n\t<head>\n\t<meta charset=\"UTF-8\"/>\n" .
 				"\t<link rel=\"alternate\" type=\"application/rss+xml\" href=\"?command=Contents.getRss\" title=\"RSS2.0\" />\n" .
 				"\t<title>%s</title>\n" .
+				"$strAdSense".
 				"</head>\n<body>\n",$title);
 		//パンくずリスト
 		echo "<ul class=\"breadcrumb\">\n";
