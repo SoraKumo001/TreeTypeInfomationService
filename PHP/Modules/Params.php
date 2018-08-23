@@ -25,7 +25,7 @@ class Params{
 		foreach ($names as $name) {
 			$names2[] = "Global_" . $name;
 		}
-		$params = Params::getParams($names2);
+		$params = Params::getParams(...$names2);
 		$params2 = [];
 		foreach ($params as $key => $value) {
 			$params2[substr($key,7)] = $value;

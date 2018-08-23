@@ -31,8 +31,20 @@ function outputFile($fileName){
 			"\t\tfunction gtag() { dataLayer.push(arguments); }\n".
 			"\t\tgtag('js', new Date());\n".
 			"\t\tgtag('config', AnalyticsUA);\n".
-			"\t</script>",
+			"\t</script>\n",
 			$analytics, $analytics);
+	}
+	$adsense = Params::getParam("Global_base_adsense", "");
+	if($adsense!=""){
+		$scripts .= sprintf(
+			"\t<script async src=\"//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js\"></script>\n".
+			"\t<script>\n".
+			"\t\t(adsbygoogle = window.adsbygoogle || []).push({\n".
+			"\t\tgoogle_ad_client: \"%s\",\n".
+			"\t\tenable_page_level_ads: true\n".
+			"\t\t});\n".
+			"\t</script>\n",
+			$adsense);
 	}
 
 	//圧縮

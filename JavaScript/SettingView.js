@@ -44,8 +44,9 @@ function createBaseSetView(parent) {
 	list.addItem("タイトル");
 	list.addItem("説明");
 	list.addItem("アナリティクスID");
+	list.addItem("AdSenseId");
 
-	var label = ["base_url", "base_title", "base_info", "base_analytics"];
+	var label = ["base_url", "base_title", "base_info", "base_analytics", "base_adsense"];
 
 	list.addEvent("itemClick", function (e) {
 		var index = e.itemIndex;
