@@ -366,7 +366,7 @@ class Contents{
 
 			$item->addChild("pubDate", date("r", strtotime($value["date"])));
 		}
-		ob_start("ob_gzhandler");
+		//ob_start("ob_gzhandler");
 		echo $rss->asXML();
 		exit(0);
 	}

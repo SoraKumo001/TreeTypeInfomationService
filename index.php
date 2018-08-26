@@ -48,7 +48,7 @@ function outputFile($fileName){
 	}
 
 	//圧縮
-	ob_start("ob_gzhandler");
+	//ob_start("ob_gzhandler");
 	// Last-modified と ETag 生成
 	$last_modified = gmdate( "D, d M Y H:i:s T", filemtime($fileName) );
 	$etag = md5( $last_modified.$fileName);
@@ -61,14 +61,15 @@ function outputFile($fileName){
 
 $result = MG::init();
 if(isBot()){
-	ob_start("ob_gzhandler");
+	//ob_start("ob_gzhandler");
 	Contents::outputPage();
 }else if($result === null){
 	outputFile(".index.html");
 }
 else{
 	//Log::output(MG::getSessionHash(),$result["message"]);
-	ob_start("ob_gzhandler");
+	//ob_start("ob_gzhandler");
+	header("Content-type: application/json");
 	header("Access-Control-Allow-Origin: *");
 	echo json_encode($result, JSON_UNESCAPED_UNICODE);
 }

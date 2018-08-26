@@ -118,6 +118,8 @@ class Files{
 		   	$httpDisposition= "attachment;";
 		   	break;
 		}
+		header("content-length: " . $size);
+		header("Last-Modified: ". date("r", strtotime($date)));
 		header("Content-type: $contentType");
 		header("Content-Disposition: $httpDisposition filename*=utf-8'jp'".urlencode($name));
 		fpassthru($fp);
