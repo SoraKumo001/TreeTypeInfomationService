@@ -11,16 +11,44 @@ function isBot(){
 	return false;
 }
 
-function outputFile($fileName){
+function outputScript($path,&$links){
 	//JavaScriptを自動的に出力
-	$files = scandir(dirname(__FILE__)."/JavaScript");
+	$files = scandir(dirname(__FILE__) . "/" . $path);
 	$scripts = "";
-	foreach($files as $file){
-		$name = explode(".",$file,2);
-		if(count($name) === 2 && $name[1] === "js"){
-			$scripts .= "\t<script type='text/javascript' src='JavaScript/$file'></script>\n";
+	foreach ($files as $file) {
+		$name = explode(".", $file, 2);
+		if (count($name) === 2 && $name[1] === "js") {
+			$scripts .= "\t<script type='text/javascript' src='$path/$file'></script>\n";
+			$links[] = "$path/$file";
 		}
 	}
+	return $scripts;
+}
+function outputCss($path, &$links){
+	//JavaScriptを自動的に出力
+	$files = scandir(dirname(__FILE__) . "/" . $path);
+	$scripts = "";
+	foreach ($files as $file) {
+		$name = explode(".", $file, 2);
+		if (count($name) === 2 && $name[1] === "js") {
+			$scripts .= "\t<link rel='stylesheet' href='$path/$file'>\n";
+			$links[] = "$path/$file";
+		}
+	}
+	return $scripts;
+}
+
+function outputFile($fileName){
+	$links = [];
+	$scripts = outputCss("css", $links);
+	$scripts .= outputScript("JavaScript/include", $links);
+	$scripts .= outputScript("JavaScript", $links);
+
+	foreach ($links as $link) {
+		header("link: <$link>;rel=preload;as=script;", false);
+	}
+
+
 	$analytics = Params::getParam("Global_base_analytics", "");
 	if($analytics!=""){
 		$scripts .= sprintf(
