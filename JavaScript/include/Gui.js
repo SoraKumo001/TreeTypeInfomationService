@@ -915,6 +915,7 @@
 			return win.GUI.separateChildList[index];
 		}
 		win.GUI.separateChildList[0].addEventListener("mousedown", slideTimeout);
+		win.GUI.separateChildList[0].addEventListener("touchstart", slideTimeout);
 
 		var slideHandle = null;
 		function slide(){
