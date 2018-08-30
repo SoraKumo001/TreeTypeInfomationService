@@ -1012,32 +1012,61 @@
 				case "ew":
 					if(win.GUI.separatePos >= width-separateThick)
 						win.GUI.separatePos = width-separateThick-1;
+					var p = width - win.GUI.separatePos - separateThick;
 					separate.setSize(separateThick,height);
-					separate.GUI.x = width-(win.GUI.separatePos+separateThick);
-					separate.GUI.y = 0;
-					win.GUI.separateChildList[1].setSize(separate.GUI.x,height);
-					win.GUI.separateChildList[0].GUI.x = separate.GUI.x+separateThick;
-					win.GUI.separateChildList[0].setSize(width-(separate.GUI.x+separateThick),height);
+					if (win.GUI.overlay) {
+						separate.GUI.x = p + (width - separateThick - p) * win.GUI.overlayMove;
+						separate.GUI.y = 0;
+						win.GUI.separateChildList[1].setSize(width, height);
+						win.GUI.separateChildList[0].GUI.x = p + separateThick + (width - separateThick - p) * win.GUI.overlayMove;
+						win.GUI.separateChildList[0].setSize(p + separateThick, height);
+					}
+					else{
+						separate.GUI.x = p;
+						separate.GUI.y = 0;
+						win.GUI.separateChildList[1].setSize(p,height);
+						win.GUI.separateChildList[0].GUI.x = p+separateThick;
+						win.GUI.separateChildList[0].setSize(p+separateThick,height);
+					}
 					break;
 				case "ns":
 					if(win.GUI.separatePos >= height-separateThick)
 						win.GUI.separatePos = height-separateThick-1;
 					separate.setSize(width,separateThick);
-					separate.GUI.x = 0;
-					separate.GUI.y = win.GUI.separatePos;
-					win.GUI.separateChildList[0].setSize(width,win.GUI.separatePos);
-					win.GUI.separateChildList[1].GUI.y = win.GUI.separatePos+separateThick;
-					win.GUI.separateChildList[1].setSize(width,height-(win.GUI.separatePos+separateThick));
+					if (win.GUI.overlay) {
+						separate.GUI.x = 0;
+						separate.GUI.y = win.GUI.separatePos-parseInt(win.GUI.separatePos * win.GUI.overlayMove);
+						win.GUI.separateChildList[0].GUI.y = -parseInt(win.GUI.separatePos * win.GUI.overlayMove);
+						win.GUI.separateChildList[0].setSize(width, win.GUI.separatePos);
+						win.GUI.separateChildList[1].GUI.y = 0;
+						win.GUI.separateChildList[1].setSize(width, height);
+					}
+					else{
+						separate.GUI.x = 0;
+						separate.GUI.y = win.GUI.separatePos;
+						win.GUI.separateChildList[0].setSize(width,win.GUI.separatePos);
+						win.GUI.separateChildList[1].GUI.y = win.GUI.separatePos+separateThick;
+						win.GUI.separateChildList[1].setSize(width,height-(win.GUI.separatePos+separateThick));
+					}
 					break;
 				case "sn":
 					if(win.GUI.separatePos >= height-separateThick)
 						win.GUI.separatePos = height-separateThick-1;
-					separate.setSize(width,separateThick);
-					separate.GUI.x = 0;
-					separate.GUI.y = height-(win.GUI.separatePos+separateThick);
-					win.GUI.separateChildList[1].setSize(width,separate.GUI.y);
-					win.GUI.separateChildList[0].GUI.y = separate.GUI.y+separateThick;
-					win.GUI.separateChildList[0].setSize(width,height-(separate.GUI.y+separateThick));
+					if (win.GUI.overlay) {
+						separate.setSize(width, separateThick);
+						separate.GUI.x = 0;
+						separate.GUI.y = height - win.GUI.separatePos + (win.GUI.separatePos - separateThick)*win.GUI.overlayMove;
+						win.GUI.separateChildList[1].setSize(width, height);
+						win.GUI.separateChildList[0].GUI.y = height - win.GUI.separatePos + separateThick + (win.GUI.separatePos - separateThick) * win.GUI.overlayMove;
+						win.GUI.separateChildList[0].setSize(width, win.GUI.separatePos - separateThick);
+					}else{
+						separate.setSize(width, separateThick);
+						separate.GUI.x = 0;
+						separate.GUI.y = height-win.GUI.separatePos;
+						win.GUI.separateChildList[1].setSize(width, height - win.GUI.separatePos);
+						win.GUI.separateChildList[0].GUI.y = height -win.GUI.separatePos + separateThick;
+						win.GUI.separateChildList[0].setSize(width, win.GUI.separatePos - separateThick);
+					}
 					break;
 			}
 		});
