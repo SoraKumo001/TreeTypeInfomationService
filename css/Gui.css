@@ -188,6 +188,7 @@
 	overflow: visible;
 }
 
+
 .GUIArea .GUIWindow #GUISeparate > .GUIClient{
 	user-select: none;
 	box-sizing: border-box;

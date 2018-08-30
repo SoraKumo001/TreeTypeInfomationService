@@ -699,7 +699,7 @@
 			while(p){
 				foreground.push(p);
 				if(p.GUI.arrangement == null || p.GUI.arrangement == "")
-					p.GUI.sortZ = p.getOtherZ()+1000;
+					p.GUI.sortZ = p.getOtherZ()+500;
 				p.requestLayout();
 				p = p.GUI.parent;
 			}
@@ -880,6 +880,9 @@
 			}
 			win.requestLayout();
 		}
+		win.GUI.overlay = false;
+		win.GUI.overlayOpen = true;
+		win.GUI.overlayMove = 0;
 		win.GUI.separateThick = 10;
 		win.GUI.separatePos = (pos==null?100:pos);
 		win.GUI.separateType = (type==null?"we":type);
@@ -888,14 +891,76 @@
 		win.addChild(separate);
 		win.addChild(win.GUI.separateChildList[0]);
 		win.addChild(win.GUI.separateChildList[1]);
+		win.GUI.separateChildList[0].setOrderTop(true);
+
+		win.setOverlay = function(flag){
+			if (flag){
+				win.GUI.overlay = true;
+				win.GUI.overlayOpen = true;
+				win.GUI.overlayMove = 0;
+				slideTimeout();
+			}else{
+				win.GUI.overlay = false;
+				win.GUI.overlayOpen = true;
+				win.GUI.overlayMove = 0;
+			}
+			win.requestLayout();
+		}
 
 		separate.id = "GUISeparate";
 		separate.GUI.parts["GUIClient"].id=win.GUI.separateType;
+		separate.setOrderTop(true);
 
 		win.getChild = function(index){
 			return win.GUI.separateChildList[index];
 		}
+		win.GUI.separateChildList[0].addEventListener("mousedown", slideTimeout);
+
+		var slideHandle = null;
+		function slide(){
+			if (!win.GUI.overlay || slideHandle)
+				return;
+			slideHandle = setInterval(function(){
+				if (win.GUI.overlayOpen) {
+					win.GUI.overlayMove += 0.1;
+					if (win.GUI.overlayMove >= 1) {
+						win.GUI.overlayMove = 1;
+						win.GUI.overlayOpen = false;
+						clearInterval(slideHandle);
+						slideHandle = null;
+					}
+				} else {
+					win.GUI.overlayMove -= 0.1;
+					if (win.GUI.overlayMove < 0) {
+						win.GUI.overlayMove = 0;
+						win.GUI.overlayOpen = true;
+						clearInterval(slideHandle);
+						slideHandle = null;
+						slideTimeout();
+					}
+				}
+				win.requestLayout();
+			},10);
+		}
+		var slideTimeoutHandle = null;
+		function slideTimeout(){
+			if (slideTimeoutHandle)
+				clearTimeout(slideTimeoutHandle);
+			if (win.GUI.overlay){
+				slideTimeoutHandle = setTimeout(function(){
+					if(win.GUI.overlayOpen){
+						slide();
+						slideTimeoutHandle = null;
+					}
+				},3000);
+			}
+		}
+		separate.addEvent("mousedown", slide);
+		separate.addEvent("touchstart", slide);
+
 		separate.addEvent("mousemove",function(e){
+			if (win.GUI.overlay)
+				return;
 			if(GUI.selectWindow == separate){
 				var width = win.getClientWidth();
 				var height = win.getClientHeight();
@@ -934,9 +999,15 @@
 					separate.GUI.x = win.GUI.separatePos;
 					separate.GUI.y = 0;
 					win.GUI.separateChildList[0].setSize(separate.GUI.x,height);
-					win.GUI.separateChildList[1].GUI.x = separate.GUI.x+separateThick;
-					win.GUI.separateChildList[1].setSize(width-(separate.GUI.x+separateThick),height);
-					break;
+					if (win.GUI.overlay){
+						separate.GUI.x -= parseInt(win.GUI.separatePos * win.GUI.overlayMove);
+						win.GUI.separateChildList[0].GUI.x = -win.GUI.separatePos * win.GUI.overlayMove;
+						win.GUI.separateChildList[1].GUI.x = 0;
+						win.GUI.separateChildList[1].setSize(width, height);
+					}else{
+						win.GUI.separateChildList[1].GUI.x = win.GUI.separatePos+separateThick;
+						win.GUI.separateChildList[1].setSize(width - (win.GUI.separatePos+separateThick),height);
+					}break;
 				case "ew":
 					if(win.GUI.separatePos >= width-separateThick)
 						win.GUI.separatePos = width-separateThick-1;

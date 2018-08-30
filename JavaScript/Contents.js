@@ -122,10 +122,16 @@ function createContensView(mainView){
 	var separate = GUI.createSeparate(300, "we");
 	mainView.addChild(separate, "client");
 
+	var ua = navigator.userAgent;
+	if (ua.indexOf('Mobile') > 0)
+		separate.setOverlay(true);
+
 	var contentsMain = createContentsView();
 	separate.addSeparateChild(1, contentsMain, "client");
 
 	var treeView = GUI.createTreeView();
+	separate.getChild(0).getClient().style.backgroundColor = 'transparent';
+	treeView.getClient().style.backgroundColor = 'rgba(255,255,255,0.8)';
 	separate.addSeparateChild(0,treeView,"client");
 	treeView.addEvent("select", function (r) {
 		var id = treeView.getSelectValue();
