@@ -64,7 +64,7 @@ function createCustomEditor(id) {
 			var s;
 			if (file.type.indexOf("image") != -1){
 				var node = editor.createElement("img");
-				node.style.maxWidth = "640px";
+				node.style.maxWidth = "90%";
 				node.src = '?command=Files.download&id=' + id;
 				editor.insertNode(node);
 			}else{
@@ -106,7 +106,7 @@ function createCustomEditor(id) {
 		var s;
 		if (flag){
 			var node = editor.createElement("img");
-			node.style.maxWidth = "640px";
+			node.style.maxWidth = "90%";
 			node.src = '?command=Files.download&id='+id;
 			editor.insertNode(node);
 		}else{

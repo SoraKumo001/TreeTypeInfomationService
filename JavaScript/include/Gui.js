@@ -916,6 +916,8 @@
 		}
 		win.GUI.separateChildList[0].addEventListener("mousedown", slideTimeout);
 		win.GUI.separateChildList[0].addEventListener("touchstart", slideTimeout);
+		win.GUI.separateChildList[1].addEventListener("mousedown", slideClose);
+		win.GUI.separateChildList[1].addEventListener("touchstart", slideClose);
 
 		var slideHandle = null;
 		function slide(){
@@ -944,7 +946,7 @@
 			},10);
 		}
 		var slideTimeoutHandle = null;
-		function slideTimeout(){
+		function slideTimeout(e){
 			if (slideTimeoutHandle)
 				clearTimeout(slideTimeoutHandle);
 			if (win.GUI.overlay){
@@ -954,6 +956,13 @@
 						slideTimeoutHandle = null;
 					}
 				},3000);
+			}
+			//if(e)
+			//	e.preventDefault();
+		}
+		function slideClose(){
+			if (win.GUI.overlayOpen) {
+				slide();
 			}
 		}
 		separate.addEvent("mousedown", slide);

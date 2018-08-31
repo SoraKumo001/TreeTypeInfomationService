@@ -72,6 +72,7 @@ function onStart(){
 	top.setClientClass("LayoutTop");
 
 	var title = document.createElement("div");
+	title.className = "topTitle";
 	top.getClient().appendChild(title);
 	title.textContent = System.title;
 	document.title = System.title;
@@ -80,48 +81,51 @@ function onStart(){
 		document.title = System.title;
 	});
 
+	var items = document.createElement("div");
+	items.className = "menuItems";
+	top.getClient().appendChild(items);
+
+	//ユーザの表示
+	var login = document.createElement("div");
+	System.login = login;
+	login.className = "menuItem";
+	items.appendChild(login);
+	login.addEventListener("click", function () {
+		SESSION.createLoginWindow(onStart);
+	});
+	System.login.textContent = SESSION.getUserName();
+
+	//管理メニューの表示
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){
-		var visible = document.createElement("div");
-		System.visible = setting;
-		visible.className = "menuItem";
-		visible.textContent = "表示";
-		top.getClient().appendChild(visible);
-		visible.addEventListener("click", function () {
-			var flag = !Contents.isVisible();
-			visible.textContent = flag?"表示":"非表示";
-			Contents.setVisible(flag);
+		var setting = document.createElement("div");
+		System.setting = setting;
+		setting.className = "menuItem";
+		setting.textContent = "設定";
+		items.appendChild(setting);
+		setting.addEventListener("click", function () {
+			createSettingView(mainView);
 		});
 
 		var file = document.createElement("div");
 		System.file = setting;
 		file.className = "menuItem";
 		file.textContent = "FILE";
-		top.getClient().appendChild(file);
+		items.appendChild(file);
 		file.addEventListener("click", function () {
 			createFileWindow();
 		});
 
-		var setting = document.createElement("div");
-		System.setting = setting;
-		setting.className = "menuItem";
-		setting.textContent = "設定";
-		top.getClient().appendChild(setting);
-		setting.addEventListener("click", function () {
-			createSettingView(mainView);
+		var visible = document.createElement("div");
+		System.visible = setting;
+		visible.className = "menuItem";
+		visible.textContent = "表示";
+		items.appendChild(visible);
+		visible.addEventListener("click", function () {
+			var flag = !Contents.isVisible();
+			visible.textContent = flag?"表示":"非表示";
+			Contents.setVisible(flag);
 		});
-
-
 	}
-
-
-	var login = document.createElement("div");
-	System.login = login;
-	login.className = "menuItem";
-	top.getClient().appendChild(login);
-	login.addEventListener("click", function () {
-		SESSION.createLoginWindow(onStart);
-	});
-	System.login.textContent = SESSION.getUserName();
 
 	var mainView = GUI.createWindow();
 	mainView.setChildStyle("client");

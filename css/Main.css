@@ -7,14 +7,21 @@ body{
 	background-color: darkgrey;
 	align-items: center;
 }
-.LayoutTop div:first-child{
+.LayoutTop > div.topTitle{
 	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 	font-size: 250%;
 	color: white;
 	margin-left: 1em;
-	flex: 1;
+	white-space: nowrap;
 }
-
+.LayoutTop > div.menuItems{
+	position: absolute;
+	overflow: auto;
+	white-space: nowrap;
+	display: flex;
+	width: 100%;
+	flex-direction: row-reverse;
+}
 
 div.menuItem{
 	background-color: rgba(255,255,255,0.5);
