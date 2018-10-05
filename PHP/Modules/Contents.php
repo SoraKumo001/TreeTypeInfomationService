@@ -274,7 +274,9 @@ class Contents{
 	public static function getPages(){
 		//ツリー構造に必要なデータを抽出
 		$values = MG::DB()->queryData(
-			"select contents_id as id,contents_parent as pid,contents_stat as stat,to_char(contents_date at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') as date,
+			"select contents_id as id,contents_parent as pid,contents_stat as stat,
+			to_char(contents_date at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') as date,
+			to_char(contents_update at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') as update,
 			contents_type as type,contents_title as title,contents_value as value from contents where contents_stat=1"
 		);
 		if ($values === null)
@@ -364,7 +366,7 @@ class Contents{
 				sprintf("%s?p=%d", $url, $value["id"])
 			);
 
-			$item->addChild("pubDate", date("r", strtotime($value["date"])));
+			$item->addChild("pubDate", date("r", strtotime($value["update"])));
 		}
 		//ob_start("ob_gzhandler");
 		echo $rss->asXML();
@@ -511,6 +513,7 @@ class Contents{
 		}
 		printf(
 			"<!DOCTYPE html>\n<html>\n\t<head>\n\t<meta charset=\"UTF-8\"/>\n" .
+				"\t<meta name=\"viewport\" content=\"width=device-width,minimum-scale=1,initial-scale=1\"/>\n".
 				"\t<link rel=\"alternate\" type=\"application/rss+xml\" href=\"?command=Contents.getRss\" title=\"RSS2.0\" />\n" .
 				"\t<title>%s</title>\n" .
 				"$strAdSense".
