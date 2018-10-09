@@ -511,13 +511,21 @@ class Contents{
 		foreach (array_reverse($parents) as $parent){
 			$title = htmlspecialchars($parent["title"]) . " ～ " . $title;
 		}
+		$url = Params::getParam("Global_base_url", "");
+		$body = Self::outputContents($contents);
 		printf(
 			"<!DOCTYPE html>\n<html>\n\t<head>\n\t<meta charset=\"UTF-8\"/>\n" .
 				"\t<meta name=\"viewport\" content=\"width=device-width,minimum-scale=1,initial-scale=1\"/>\n".
+				"\t<link rel=\"canonical\" href=\"%s?p=%d\" />\n".
 				"\t<link rel=\"alternate\" type=\"application/rss+xml\" href=\"?command=Contents.getRss\" title=\"RSS2.0\" />\n" .
 				"\t<title>%s</title>\n" .
-				"$strAdSense".
-				"</head>\n<body>\n",$title);
+				"\t<meta name=\"description\" content=\"%s\"/>\n" .
+				"%s".
+				"</head>\n<body>\n",
+				$url,$id,
+				$title,htmlspecialchars(mb_substr(preg_replace('/\n|\r|\r\n/', '', strip_tags($body)), 0, 80)),
+				$strAdSense
+		);
 		//パンくずリスト
 		echo "<ul class=\"breadcrumb\">\n";
 		foreach(array_reverse($parents) as $parent){
@@ -530,28 +538,28 @@ class Contents{
 		}
 		echo "</ul>\n\n";
 
-		Self::outputContents($contents);
-		echo "</body>\n</html>\n";
+
+		echo "$body\n</body>\n</html>\n";
 	}
 	public static function outputContents($contens){
 		//タイトルの出力
 		switch($contens["title_type"]){
 			case 1:
-				printf("<h1>%s</h1>\n", $contens["title"]);
+				$body = sprintf("<h1>%s</h1>\n", $contens["title"]);
 				break;
 			case 2:
-				printf("<h2>%s</h2>\n", $contens["title"]);
+				$body = sprintf("<h2>%s</h2>\n", $contens["title"]);
 				break;
 			case 3:
-				printf("<h3>%s</h3>\n", $contens["title"]);
+				$body = sprintf("<h3>%s</h3>\n", $contens["title"]);
 				break;
 		}
-		printf("<div>%s</div>\n", date("Y-m-d H:i:s", strtotime($contens["date"])));
-		printf("<p>%s</p>\n", $contens["value"]);
+		$body .= sprintf("<div>%s</div>\n<p>%s</p>\n", date("Y-m-d H:i:s", strtotime($contens["date"])), $contens["value"]);
 
 		foreach($contens["childs"] as $child){
-			Self::outputContents($child);
+			$body .= Self::outputContents($child);
 		}
+		return $body;
 	}
 
 }
