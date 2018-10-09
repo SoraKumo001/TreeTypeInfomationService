@@ -8,6 +8,8 @@ function isBot(){
 		return true;
 	if (stripos($agent, "search") !== false)
 		return true;
+	if (stripos($agent, "facebookexternalhit") !== false)
+		return true;
 	return false;
 }
 

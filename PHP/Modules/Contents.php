@@ -304,7 +304,8 @@ class Contents{
 			$title = $value["title"];
 			$p = $value;
 			while(isset($p["parent"]) && $p = $p["parent"]){
-				$title .= " ～ ". $p["title"];
+				if($p["id"] != 1)
+					$title .= " ～ ". $p["title"];
 			}
 			$value["title2"] = $title;
 			$pages[] = $value;
