@@ -95,6 +95,15 @@ function onStart(){
 	});
 	System.login.textContent = SESSION.getUserName();
 
+	//パンくずリスト作成
+	var breadcrumbList = document.createElement('script');
+	breadcrumbList.type='application/ld+json';
+	breadcrumbValue={
+		"@context": "http://schema.org",
+  		"@type": "BreadcrumbList","itemListElement":[]};
+	breadcrumbList.src = JSON.stringify(breadcrumbValue);
+	document.head.appendChild(breadcrumbList);
+
 	//管理メニューの表示
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){
 		var setting = document.createElement("div");

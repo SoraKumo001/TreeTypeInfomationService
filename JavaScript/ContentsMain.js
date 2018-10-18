@@ -59,6 +59,15 @@ function createContentsView(){
 			try {
 				gtag('config', AnalyticsUA, { 'page_title': value["title"], 'page_path': '/?p=' + value["id"]});
 			} catch (e) { }
+
+			var desc = document.head.querySelector("meta[name=description]");
+			if(!desc){
+				desc = document.createElement("meta");
+				desc.name = "description";
+				document.head.appendChild(desc);
+			}
+			desc.content = page.querySelector(".Body").textContent.substr(0,40);
+
 		}
 	}
 	win.moveVector = function (id, vector){

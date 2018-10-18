@@ -4,10 +4,10 @@ require_once("PHP/Manager.php");
 function isBot(){
 	//return true;
 	$agent = $_SERVER['HTTP_USER_AGENT'];
-	if (stripos($agent, "bot") !== false)
-		return true;
-	if (stripos($agent, "search") !== false)
-		return true;
+	//if (stripos($agent, "bot") !== false)
+	//	return true;
+	//if (stripos($agent, "search") !== false)
+	//	return true;
 	if (stripos($agent, "facebookexternalhit") !== false)
 		return true;
 	return false;
@@ -47,7 +47,7 @@ function outputFile($fileName){
 	$scripts .= outputScript("JavaScript", $links);
 
 	foreach ($links as $link) {
-		header("link: <$link>;rel=preload;as=script;", false);
+		//header("link: <$link>;rel=preload;as=script;", false);
 	}
 
 

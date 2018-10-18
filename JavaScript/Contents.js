@@ -98,7 +98,35 @@ Contents.deleteContents = function (id) {
 	}
 }
 
+function createBreadcrumb(item){
+	if(!item)
+		return;
+	var url = location.href.replace(/\?.*$/,"");
+	var list = [];
+	do{
+		var bradcrumb = {
+			"@type": "ListItem",
+			"position": 1,
+			"item":
+			{
+				"@id": url+"?p="+item.getItemValue(),
+				"name": item.getItemText()
+			}
+    	}
+		list.unshift(bradcrumb);
+	}while(item = item.getParentItem());
+	for(var i=0;i<list.length;i++){
+		list[i].position = i+1;
+	}
+	var breadcrumbList = document.head.querySelector("script[type='application/ld+json']");
+	if(breadcrumbList){
+		breadcrumbValue={
+		"@context": "http://schema.org",
+  		"@type": "BreadcrumbList","itemListElement":list};
+		breadcrumbList.textContent = JSON.stringify(breadcrumbValue);
+	}
 
+}
 function createContensView(mainView){
 
 	function setTreeItem(item, value) {
@@ -143,12 +171,14 @@ function createContensView(mainView){
 			//URLの書き換え
 			history.pushState(null, null, "?p=" + id);
 		}
-
-		//親アイテムも含めて展開
 		var item = treeView.getSelectItem();
+		//パンくずリスト生成
+		createBreadcrumb(item);
+		//親アイテムも含めて展開
 		do{
 			item.openItem(true);
 		}while(item = item.getParentItem());
+
 
 		//タイトル設定
 		item = treeView.getSelectItem();

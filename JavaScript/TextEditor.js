@@ -41,13 +41,13 @@ function createTextEditor(){
 
 	function setPGCode(select){
 		var range = select.getRangeAt(0);
-		var text = range.toString();
+		var text = select.toString();
 		var text = text.replace(
 		 	/["&'<>\n]/g,
-		 	function (ch) { return { '\n':'<br>\n','"':'&quot;', '&':'&amp;', '\'':'&#39;', '<':'&lt;', '>':'&gt;' }[ ch ]; }
+			function (ch) { return { '</div>': '<br>\n','\n':'<br>\n','"':'&quot;', '&':'&amp;', '\'':'&#39;', '<':'&lt;', '>':'&gt;' }[ ch ]; }
 		 	);
 		range.deleteContents();
-		range.insertNode(range.createContextualFragment("<div class='code'><div>" + text + "</div></div>"));
+		range.insertNode(range.createContextualFragment("<div class='code'><div>" + text + "</div></div><br>"));
 		updateHtmlTimer();
 	}
 	function createStdPanel(){
@@ -213,8 +213,42 @@ function createTextEditor(){
 	mText.addEventListener("input",function(){
 		updateTextTimer();
 	});
+	function isEnd(node){
 
+	}
 	mHtml.addEventListener("keydown",function(e){
+		switch(e.keyCode){
+		case 40:
+			var select = iframe.contentDocument.getSelection();
+			var anchorNode = select.anchorNode;
+			var anchorOffset = select.anchorOffset;
+			if(anchorNode.textContent.length === anchorOffset){
+				select.modify('move','forward',"line");
+				if(anchorNode == select.anchorNode && anchorOffset == select.anchorOffset){
+					win.sendCommand("insertHtml",false,"<br><br>");
+					updateHtmlTimer();
+				}
+				e.preventDefault();
+			}
+
+			//return false;
+			// var range = select.getRangeAt(0);
+			// var anchorNode = select.anchorNode;
+			// var anchorOffset = select.anchorOffset;
+			// //console.log(anchor);
+			// select.selectAllChildren(mHtml);
+			// select.anchorNode = anchorNode;
+			// select.offsetOffset = anchorOffset;
+
+			//console.log(select.toString());
+			//select.extend(mHtml,10);
+			// var range =	iframe.contentDocument.getSelection().getRangeAt(0);
+
+			// 	range.setEnd(range.get)
+			// console.log(isEnd(range.endContainer());
+			break;
+		}
+		//console.log(e.keyCode);
 		// if(e.keyCode == 13){
 		// 	win.sendCommand("insertHtml",false,"<br>\u200C");
 		// 	e.preventDefault();
@@ -230,6 +264,7 @@ function createTextEditor(){
 				reader.readAsDataURL(file);
 				reader.onload = function() {
 					win.sendCommand("insertImage",false,reader.result);
+					updateHtmlTimer();
 				};
 			}
 		}
