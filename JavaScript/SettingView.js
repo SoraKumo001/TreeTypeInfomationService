@@ -29,11 +29,51 @@ function createSettingView(mainView) {
 	item.addItem("ユーザ設定").setItemValue(createUserView);
 	item.addItem("グループ設定").setItemValue(createGroupView);
 	item.addItem("基本設定").setItemValue(createBaseSetView);
+	item.addItem("Adsense").setItemValue(createAdsenseView);
 	item.addItem("ログ").setItemValue(createLog);
 	item.addItem("祝日設定").setItemValue(importHoliday);
 	item.addItem("設定を閉じる").setItemValue(System.reload);
 }
+function createAdsenseView(parent){
+	var list = GUI.createListView();
+	list.addHeader("項目", 200);
+	list.addHeader("データ", 300);
+	list.addItem("AdSenseCodeMain");
+	list.addItem("AdSenseCodeTop");
+	list.addItem("AdSenseCodeBottom");
+	var label = ["base_adsense", "base_adsenseTop", "base_adsenseBottom"];
 
+	list.addEvent("itemClick", function (e) {
+		var index = e.itemIndex;
+		var subIndex = e.itemSubIndex;
+		if (subIndex != 1)
+			return;
+
+		var edit = list.editText(index, subIndex);
+		edit.addEvent("enter", function (e) {
+			ADP.exec("Params.setParam", label[index], e.value).on =
+				function (flag) {
+					if (flag) {
+						Contents.loadTitle();
+						list.setItem(index, subIndex, e.value);
+					}
+				}
+		});
+
+	});
+
+	list.load = function () {
+		ADP.exec("Params.getParams", label).on = function (values) {
+			if (values) {
+				for (var i = 0; i < label.length; i++)
+					list.setItem(i, 1, values[label[i]]);
+			}
+		}
+	}
+	list.load();
+	return list;
+
+}
 
 function createBaseSetView(parent) {
 	var list = GUI.createListView();
@@ -44,7 +84,7 @@ function createBaseSetView(parent) {
 	list.addItem("タイトル");
 	list.addItem("説明");
 	list.addItem("アナリティクスID");
-	list.addItem("AdSenseId");
+
 
 	var label = ["base_url", "base_title", "base_info", "base_analytics", "base_adsense"];
 

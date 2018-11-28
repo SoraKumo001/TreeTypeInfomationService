@@ -65,6 +65,14 @@ System.reload = function(){
 function onStart(){
 	GUI.rootWindow.removeChildAll();
 
+	ADP.exec("Params.getParams", ["base_adsense", "base_adsenseTop", "base_adsenseBottom"]).on =
+		function(value){
+			System.adsense = {
+				base: value["base_adsense"],
+				top: value["base_adsenseTop"],
+				bottom: value["base_adsenseBottom"]}
+		}
+
 	//画面上部を作成
 	var top = GUI.createWindow();
 	top.setSize(0, 60);

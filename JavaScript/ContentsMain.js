@@ -20,7 +20,33 @@ function scrollTo(node,pos){
 
 	},10);
 }
+function createAdsenseNode(parent,pos){
+	var code,slot;
+	if (!System.adsense || !System.adsense.base)
+		return null;
+	code = System.adsense.base;
+	if(pos == 'TOP'){
+		slot = System.adsense.top;
+	}
+	if (pos == 'BOTTOM') {
+		slot = System.adsense.bottom;
+	}
+	if(!code || !slot)
+		return null;
+	var node = document.createElement('ins');
+	node.className = "adsbygoogle";
+	node.style.display="block";
+	node.dataset.adClient = code;
+	node.dataset.adSlot = slot;
+	node.dataset.adFormat = 'auto';
+	node.dataset.fullWidthResponsive="true";
+	parent.appendChild(node);
 
+	try {
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	} catch (e) { }
+	return node;
+}
 
 function createContentsView(){
 	function jumpContents(id) {
@@ -48,11 +74,19 @@ function createContentsView(){
 			win.removeChildAll();
 			if(value === null)
 				return;
-			//document.title = value["title"] + " ～ " + System.title;
+
 			Contents.nodes = [];
 			while (page.childNodes.length)
 				page.removeChild(page.childNodes[0]);
-			page.appendChild(createContents(value));
+			var contents = createContents(value);
+			var text = contents.textContent;
+			if(text.length > 300)
+				createAdsenseNode(page,"TOP");	//広告の挿入
+			page.appendChild(contents);
+			if (text.length > 700)
+				createAdsenseNode(page, "BOTTOM");	//広告の挿入
+
+
 			jumpContents(id);
 
 			//トラッカーに通知

@@ -2008,6 +2008,8 @@
 		//[戻り値] 無し
 		view.setItem = function (index1, index2, value) {
 			var item = mItemNode.childNodes[index1];
+			if (!item)
+				return;
 			//空データの追加
 			while (item.childNodes.length <= index2)
 				item.appendChild(createNode(""));
