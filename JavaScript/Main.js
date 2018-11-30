@@ -65,12 +65,13 @@ System.reload = function(){
 function onStart(){
 	GUI.rootWindow.removeChildAll();
 
-	ADP.exec("Params.getParams", ["base_adsense", "base_adsenseTop", "base_adsenseBottom"]).on =
+	ADP.exec("Params.getParams", ["base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner"]).on =
 		function(value){
 			System.adsense = {
 				base: value["base_adsense"],
 				top: value["base_adsenseTop"],
-				bottom: value["base_adsenseBottom"]}
+				bottom: value["base_adsenseBottom"],
+				inner: value["base_adsenseInner"]}
 		}
 
 	//画面上部を作成

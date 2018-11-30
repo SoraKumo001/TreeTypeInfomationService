@@ -41,7 +41,8 @@ function createAdsenseView(parent){
 	list.addItem("AdSenseCodeMain");
 	list.addItem("AdSenseCodeTop");
 	list.addItem("AdSenseCodeBottom");
-	var label = ["base_adsense", "base_adsenseTop", "base_adsenseBottom"];
+	list.addItem("AdSenseCodeInner");
+	var label = ["base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner"];
 
 	list.addEvent("itemClick", function (e) {
 		var index = e.itemIndex;

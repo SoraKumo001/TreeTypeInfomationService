@@ -31,20 +31,34 @@ function createAdsenseNode(parent,pos){
 	if (pos == 'BOTTOM') {
 		slot = System.adsense.bottom;
 	}
+	if (pos == 'INNER') {
+		slot = System.adsense.inner;
+	}
 	if(!code || !slot)
 		return null;
+
+	//サイズ調整
+	var div = document.createElement('div');
+	div.style.padding = '1em';
+	div.style.paddingLeft = '8%';
+	div.style.paddingRight = '8%';
+	parent.appendChild(div);
+
+
 	var node = document.createElement('ins');
-	node.className = "adsbygoogle";
+	node.className = "adsbygoogle infeed";
 	node.style.display="block";
 	node.dataset.adClient = code;
 	node.dataset.adSlot = slot;
-	node.dataset.adFormat = 'auto';
+	node.dataset.adFormat = 'horizontal';
 	node.dataset.fullWidthResponsive="true";
-	parent.appendChild(node);
+	div.appendChild(node);
 
-	try {
-		(adsbygoogle = window.adsbygoogle || []).push({});
-	} catch (e) { }
+	setTimeout(function(){
+		try {
+			(adsbygoogle = window.adsbygoogle || []).push({});
+		} catch (e) { }
+	},1);
 	return node;
 }
 
@@ -53,7 +67,7 @@ function createContentsView(){
 		if (Contents.nodes[id]) {
 			node = Contents.nodes[id];
 			var y = node.getBoundingClientRect().top - page.getBoundingClientRect().top;
-			scrollTo(client, y);
+			setTimeout(function(){scrollTo(client, y-200);},0);
 		}
 	}
 
@@ -79,12 +93,30 @@ function createContentsView(){
 			while (page.childNodes.length)
 				page.removeChild(page.childNodes[0]);
 			var contents = createContents(value);
-			var text = contents.textContent;
-			if(text.length > 300)
-				createAdsenseNode(page,"TOP");	//広告の挿入
+			var contentsChilds = contents.querySelectorAll('.ContentsArea');
+
+			//記事内広告の設定
+			var lengthAll = 0;
+			var length = 0;
+			for(var i=0;i<contentsChilds.length;i++){
+				var c = contentsChilds[i];
+				lengthAll += c.textContent.length;
+				length += c.textContent.length;
+				if(length > 900){
+					createAdsenseNode(c, "INNER");
+					length = 0;
+				}
+			}
+
+
+			if(lengthAll > 300)
+				createAdsenseNode(page,"TOP");	//トップ広告の挿入
 			page.appendChild(contents);
-			if (text.length > 700)
-				createAdsenseNode(page, "BOTTOM");	//広告の挿入
+			if (length > 700)
+				createAdsenseNode(page, "BOTTOM");	//ボトム広告の挿入
+
+
+
 
 
 			jumpContents(id);
