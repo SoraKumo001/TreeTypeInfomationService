@@ -13,41 +13,33 @@ function isBot(){
 	return false;
 }
 
-function outputScript($path,&$links){
+function outputScript($path,&$links,$type){
 	//JavaScriptを自動的に出力
 	$files = scandir(dirname(__FILE__) . "/" . $path);
 	$scripts = "";
 	foreach ($files as $file) {
 		$name = explode(".", $file, 2);
-		if (count($name) === 2 && $name[1] === "js") {
-			$scripts .= "\t<script type='text/javascript' src='$path/$file'></script>\n";
-			$links[] = "$path/$file";
+		if (count($name) === 2 && $name[1] === $type) {
+			$date = date ("YmdHis", filemtime("$path/$file"));
+			if($type === 'js')
+				$scripts .= "\t<script type='text/javascript' src='$path/$file?ver=$date'></script>\n";
+			else
+				$scripts .= "\t<link rel='stylesheet' href='$path/$file?ver=$date'>\n";
+			$links[] = "$path/$file?ver=$date";
 		}
 	}
 	return $scripts;
 }
-function outputCss($path, &$links){
-	//JavaScriptを自動的に出力
-	$files = scandir(dirname(__FILE__) . "/" . $path);
-	$scripts = "";
-	foreach ($files as $file) {
-		$name = explode(".", $file, 2);
-		if (count($name) === 2 && $name[1] === "js") {
-			$scripts .= "\t<link rel='stylesheet' href='$path/$file'>\n";
-			$links[] = "$path/$file";
-		}
-	}
-	return $scripts;
-}
+
 
 function outputFile($fileName){
 	$links = [];
-	$scripts = outputCss("css", $links);
-	$scripts .= outputScript("JavaScript/include", $links);
-	$scripts .= outputScript("JavaScript", $links);
+	$scripts = outputScript("css", $links, "css");
+	$scripts .= outputScript("JavaScript/include", $links,'js');
+	$scripts .= outputScript("JavaScript", $links,'js');
 
 	foreach ($links as $link) {
-		//header("link: <$link>;rel=preload;as=script;", false);
+		header("link: <$link>;rel=preload;as=script;", false);
 	}
 
 
