@@ -157,6 +157,12 @@ function createContensView(mainView){
 	var contentsMain = createContentsView();
 	separate.addSeparateChild(1, contentsMain, "client");
 
+	//広告領域
+	var adArea = GUI.createWindow();
+	adArea.setHeight(300);
+	separate.addSeparateChild(0, adArea, "bottom");
+	System.adArea = adArea;
+
 	var treeView = GUI.createTreeView();
 	separate.getChild(0).getClient().style.backgroundColor = 'transparent';
 	treeView.getClient().style.backgroundColor = 'rgba(255,255,255,0.8)';
@@ -190,6 +196,7 @@ function createContensView(mainView){
 		//コンテンツの読み出し
 		contentsMain.loadContents(id);
 	});
+
 
 	//管理者用編集メニュー
 	if (SESSION.isAuthority("SYSTEM_ADMIN")){

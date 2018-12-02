@@ -23,8 +23,10 @@ function outputScript($path,&$links,$type){
 			$date = date ("YmdHis", filemtime("$path/$file"));
 			if($type === 'js')
 				$scripts .= "\t<script type='text/javascript' src='$path/$file?ver=$date'></script>\n";
-			else
+			else{
+				$scripts .= "\t<link rel='preload' as='style' href='$path/$file?ver=$date'>\n";
 				$scripts .= "\t<link rel='stylesheet' href='$path/$file?ver=$date'>\n";
+			}
 			$links[] = "$path/$file?ver=$date";
 		}
 	}

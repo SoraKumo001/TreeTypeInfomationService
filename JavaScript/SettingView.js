@@ -29,7 +29,7 @@ function createSettingView(mainView) {
 	item.addItem("ユーザ設定").setItemValue(createUserView);
 	item.addItem("グループ設定").setItemValue(createGroupView);
 	item.addItem("基本設定").setItemValue(createBaseSetView);
-	item.addItem("Adsense").setItemValue(createAdsenseView);
+	item.addItem("広告").setItemValue(createAdsenseView);
 	item.addItem("ログ").setItemValue(createLog);
 	item.addItem("祝日設定").setItemValue(importHoliday);
 	item.addItem("設定を閉じる").setItemValue(System.reload);
@@ -38,11 +38,12 @@ function createAdsenseView(parent){
 	var list = GUI.createListView();
 	list.addHeader("項目", 200);
 	list.addHeader("データ", 300);
-	list.addItem("AdSenseCodeMain");
-	list.addItem("AdSenseCodeTop");
-	list.addItem("AdSenseCodeBottom");
-	list.addItem("AdSenseCodeInner");
-	var label = ["base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner"];
+	list.addItem("AdSense広告審査コード");
+	list.addItem("AdSenseページ上部");
+	list.addItem("AdSenseページ下部");
+	list.addItem("AdSense記事内");
+	list.addItem("楽天記事内");
+	var label = ["base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner","base_rakutenInner"];
 
 	list.addEvent("itemClick", function (e) {
 		var index = e.itemIndex;
@@ -51,6 +52,8 @@ function createAdsenseView(parent){
 			return;
 
 		var edit = list.editText(index, subIndex);
+		edit.setMultiLine(true);
+		edit.setHeight(100);
 		edit.addEvent("enter", function (e) {
 			ADP.exec("Params.setParam", label[index], e.value).on =
 				function (flag) {
@@ -87,7 +90,7 @@ function createBaseSetView(parent) {
 	list.addItem("アナリティクスID");
 
 
-	var label = ["base_url", "base_title", "base_info", "base_analytics", "base_adsense"];
+	var label = ["base_url", "base_title", "base_info", "base_analytics"];
 
 	list.addEvent("itemClick", function (e) {
 		var index = e.itemIndex;

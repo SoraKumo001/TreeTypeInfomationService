@@ -21,47 +21,75 @@ function scrollTo(node,pos){
 	},10);
 }
 function createAdsenseNode(parent,pos){
-	var code,slot;
-	if (!System.adsense || !System.adsense.base)
-		return null;
-	code = System.adsense.base;
+	var code;
+	if (!System.adsense)
+		return;
 	if(pos == 'TOP'){
-		slot = System.adsense.top;
+		code = System.adsense.top;
 	}
 	if (pos == 'BOTTOM') {
-		slot = System.adsense.bottom;
+		code = System.adsense.bottom;
 	}
 	if (pos == 'INNER') {
-		slot = System.adsense.inner;
+		code = System.adsense.inner;
 	}
-	if(!code || !slot)
+	if(!code)
 		return null;
 
 	//サイズ調整
 	var div = document.createElement('div');
 	div.style.padding = '1em';
-	div.style.paddingLeft = '8%';
-	div.style.paddingRight = '8%';
+	div.style.boxSizing = 'border-box';
+	div.style.overflow = 'hidden'
 	parent.appendChild(div);
-
-
-	var node = document.createElement('ins');
-	node.className = "adsbygoogle infeed";
-	node.style.display="block";
-	node.dataset.adClient = code;
-	node.dataset.adSlot = slot;
-	node.dataset.adFormat = 'horizontal';
-	node.dataset.fullWidthResponsive="true";
-	div.appendChild(node);
-
+	div.innerHTML = code;
+/*
+	//広告コードの挿入
+	var dummy = document.createElement('div');
+	dummy.innerHTML = code;
+	for(var i=0;i<dummy.childNodes.length;i++){
+		div.appendChild(dummy.childNodes[0]);
+	}
+*/
 	setTimeout(function(){
 		try {
 			(adsbygoogle = window.adsbygoogle || []).push({});
 		} catch (e) { }
-	},1);
-	return node;
+	},10);
+	return div;
 }
+function createAdsenseNode2(parent, pos) {
+	var code;
+	if (!System.rakuten)
+		return null;
+	if (pos == 'TOP') {
+		code = System.rakuten.top;
+	}
+	if (pos == 'BOTTOM') {
+		code = System.rakuten.bottom;
+	}
+	if (pos == 'INNER') {
+		code = System.rakuten.inner;
+	}
+	if (!code)
+		return null;
 
+	//サイズ調整
+	var iframe = document.createElement('iframe');
+	iframe.style.border = 'none'
+	iframe.style.width = '100%'
+	iframe.style.height = '210px'
+	iframe.style.paddingLeft = '8%';
+	iframe.style.paddingRight = '8%';
+	parent.appendChild(iframe);
+
+	setTimeout(function(){
+		iframe.contentDocument.write(code)
+
+
+	},0);
+	return iframe;
+}
 function createContentsView(){
 	function jumpContents(id) {
 		if (Contents.nodes[id]) {
@@ -98,12 +126,16 @@ function createContentsView(){
 			//記事内広告の設定
 			var lengthAll = 0;
 			var length = 0;
+			var count = 0;
 			for(var i=0;i<contentsChilds.length;i++){
 				var c = contentsChilds[i];
 				lengthAll += c.textContent.length;
 				length += c.textContent.length;
 				if(length > 900){
-					createAdsenseNode(c, "INNER");
+					if(count++ == 0)
+						createAdsenseNode2(c, "INNER");
+					else
+						createAdsenseNode(c, "INNER");
 					length = 0;
 				}
 			}
@@ -115,9 +147,12 @@ function createContentsView(){
 			if (length > 700)
 				createAdsenseNode(page, "BOTTOM");	//ボトム広告の挿入
 
+			//サイドバー
+			var client = System.adArea.getClient()
+			while (client.childNodes.length)
+				client.removeChild(client.childNodes[0])
 
-
-
+			createAdsenseNode(System.adArea.getClient(),"INNER");
 
 			jumpContents(id);
 

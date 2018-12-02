@@ -368,6 +368,8 @@
 	overflow: auto;
 	vertical-align: middle;
 	padding: 2px;
+	white-space: pre;
+
 }
 .GUICalendar table{
 	user-select: none;

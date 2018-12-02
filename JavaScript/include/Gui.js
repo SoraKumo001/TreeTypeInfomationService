@@ -2324,6 +2324,7 @@
 		return win;
 	}
 	GUI.createEditView = function(){
+		var multiLine = false;
 		var win = GUI.createWindow();
 		win.id = "overlap";
 		var client = win.getClient();
@@ -2332,8 +2333,10 @@
 		var mText = "";
 		function onKeydown(e){
 			switch(e.keyCode){
-				case 9:
 				case 13:
+					if (multiLine)
+						break;
+				case 9:
 					if(mText != client.textContent){
 						e.etype = "enter";
 						e.value = client.textContent;
@@ -2345,8 +2348,19 @@
 					break;
 			}
 		}
+		win.setMultiLine = function(flag){
+			multiLine = flag;
+		}
 		function onPaste(e){
 			var text = e.clipboardData.getData("text/plain");
+			text = text.replace(
+				/(["&'<>\n])/g,
+				function (ch) {
+					return {
+						'"': '&quot;', '&': '&amp;', '\'': '&#39;', '<': '&lt;', '>': '&gt;', '\n': '<br>',
+						' ': '&nbsp;', '\t': '&nbsp;&nbsp;&nbsp;&nbsp;'
+					}[ch];
+				});
 			document.execCommand("insertHTML", false, text);
 			e.preventDefault();
 		}
