@@ -90,6 +90,36 @@ function createAdsenseNode2(parent, pos) {
 	},0);
 	return iframe;
 }
+function createAdsenseNode3(parent, pos) {
+	var code;
+	if (!System.amazon)
+		return null;
+	if (pos == 'TOP') {
+		code = System.amazon.top;
+	}
+	if (pos == 'BOTTOM') {
+		code = System.amazon.bottom;
+	}
+	if (pos == 'SIDE') {
+		code = System.amazon.side;
+	}
+	if (!code)
+		return null;
+
+	//サイズ調整
+	var iframe = document.createElement('iframe');
+	iframe.style.border = 'none'
+	iframe.style.width = '100%'
+	iframe.style.height = '100%'
+	parent.appendChild(iframe);
+
+	setTimeout(function () {
+		iframe.contentDocument.write(code)
+
+
+	}, 0);
+	return iframe;
+}
 function createContentsView(){
 	function jumpContents(id) {
 		if (Contents.nodes[id]) {
@@ -149,10 +179,10 @@ function createContentsView(){
 
 			//サイドバー
 			var client = System.adArea.getClient()
-			while (client.childNodes.length)
-				client.removeChild(client.childNodes[0])
-
-			createAdsenseNode(System.adArea.getClient(),"INNER");
+			// while (client.childNodes.length)
+			// 	client.removeChild(client.childNodes[0])
+			if (client.childNodes.length === 0)
+				createAdsenseNode3(System.adArea.getClient(),"SIDE");
 
 			jumpContents(id);
 

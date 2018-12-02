@@ -65,15 +65,28 @@ System.reload = function(){
 function onStart(){
 	GUI.rootWindow.removeChildAll();
 
-	ADP.exec("Params.getParams", ["base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner", "base_rakutenInner"]).on =
+	ADP.exec("Params.getParams", [
+		"base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner",
+		"base_rakutenTop", "base_rakutenBottom","base_rakutenInner",
+		"base_amazonTop", "base_amazonBottom", "base_amazonInner", "base_amazonSide"]).on =
 		function(value){
 			System.adsense = {
 				base: value["base_adsense"],
 				top: value["base_adsenseTop"],
 				bottom: value["base_adsenseBottom"],
-				inner: value["base_adsenseInner"]}
+				inner: value["base_adsenseInner"],
+				side: value["base_adsenseSide"]}
 			System.rakuten = {
-				inner: value["base_rakutenInner"]
+				top: value["base_rakutenTop"],
+				bottom: value["base_rakutenBottom"],
+				inner: value["base_rakutenInner"],
+				side: value["base_rakutenSide"]
+			}
+			System.amazon = {
+				top: value["base_amazonTop"],
+				bottom: value["base_amazonBottom"],
+				inner: value["base_amazonInner"],
+				side: value["base_amazonSide"]
 			}
 		}
 

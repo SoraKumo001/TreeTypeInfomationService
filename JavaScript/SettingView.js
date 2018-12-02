@@ -42,8 +42,19 @@ function createAdsenseView(parent){
 	list.addItem("AdSenseページ上部");
 	list.addItem("AdSenseページ下部");
 	list.addItem("AdSense記事内");
+	list.addItem("AdSenseサイド");
+	list.addItem("楽天記ページ上部");
+	list.addItem("楽天記ページ下部");
 	list.addItem("楽天記事内");
-	var label = ["base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner","base_rakutenInner"];
+	list.addItem("楽天サイド");
+	list.addItem("Amazonページ上部");
+	list.addItem("Amazonページ下部");
+	list.addItem("Amazon記事内");
+	list.addItem("Amazonサイド");
+	var label = [
+		"base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner", "base_adsenseSide",
+		"base_rakutenTop", "base_rakutenBottom", "base_rakutenInner", "base_rakutenSide",
+		"base_amazonTop", "base_amazonBottom", "base_amazonInner", "base_amazonSide"];
 
 	list.addEvent("itemClick", function (e) {
 		var index = e.itemIndex;
