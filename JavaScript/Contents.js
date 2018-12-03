@@ -151,7 +151,7 @@ function createContensView(mainView){
 	mainView.addChild(separate, "client");
 
 	var ua = navigator.userAgent;
-	if (ua.indexOf('Mobile') > 0)
+	if (ua.indexOf('Mobile') > 0 || ua.indexOf('iPad') > 0 || ua.indexOf('Android') > 0)
 		separate.setOverlay(true);
 
 	var contentsMain = createContentsView();

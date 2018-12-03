@@ -38,10 +38,12 @@ function createAdsenseNode(parent,pos){
 
 	//サイズ調整
 	var div = document.createElement('div');
-	div.style.padding = '1em';
 	div.style.boxSizing = 'border-box';
 	div.style.overflow = 'hidden'
-	parent.appendChild(div);
+	if(pos == 'TOP')
+		parent.insertBefore(div,parent.firstChild);
+	else
+		parent.appendChild(div);
 	div.innerHTML = code;
 /*
 	//広告コードの挿入
@@ -81,7 +83,10 @@ function createAdsenseNode2(parent, pos) {
 	iframe.style.height = '210px'
 	iframe.style.paddingLeft = '8%';
 	iframe.style.paddingRight = '8%';
-	parent.appendChild(iframe);
+	if(pos == 'TOP')
+		parent.insertBefore(iframe,parent.firstChild);
+	else
+		parent.appendChild(iframe);
 
 	setTimeout(function(){
 		iframe.contentDocument.write(code)
@@ -151,30 +156,32 @@ function createContentsView(){
 			while (page.childNodes.length)
 				page.removeChild(page.childNodes[0]);
 			var contents = createContents(value);
+			page.appendChild(contents);
+
 			var contentsChilds = contents.querySelectorAll('.ContentsArea');
 
-			//記事内広告の設定
-			var lengthAll = 0;
-			var length = 0;
+			var allHeight = 0;
+			var height = 0;
 			var count = 0;
+			//記事内広告の設定
 			for(var i=0;i<contentsChilds.length;i++){
 				var c = contentsChilds[i];
-				lengthAll += c.textContent.length;
-				length += c.textContent.length;
-				if(length > 900){
+				height += c.offsetHeight;
+				allHeight +=  c.offsetHeight;
+				if(height > 900){
 					if(count++ == 0)
 						createAdsenseNode2(c, "INNER");
 					else
 						createAdsenseNode(c, "INNER");
-					length = 0;
+					height = 0;
 				}
 			}
 
 
-			if(lengthAll > 300)
+			if(allHeight > 300)
 				createAdsenseNode(page,"TOP");	//トップ広告の挿入
-			page.appendChild(contents);
-			if (length > 700)
+
+			if (length > 900)
 				createAdsenseNode(page, "BOTTOM");	//ボトム広告の挿入
 
 			//サイドバー
