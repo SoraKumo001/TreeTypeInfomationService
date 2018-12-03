@@ -111,19 +111,32 @@ function createAdsenseNode3(parent, pos) {
 	if (!code)
 		return null;
 
-	//サイズ調整
-	var iframe = document.createElement('iframe');
-	iframe.style.border = 'none'
-	iframe.style.width = '100%'
-	iframe.style.height = '100%'
-	parent.appendChild(iframe);
+	//document.writeのフック
+	var documentWrite = document.write;
+	document.write = function(value){
+		var div = document.createElement('div');
+		div.innerHTML = value;
+		parent.appendChild(div);
+		document.write = documentWrite;
+	}
+	//広告コードの挿入
+	var dummy = document.createElement('div');
+	dummy.innerHTML = code;
+	while(dummy.childNodes.length){
+		let node =  dummy.childNodes[0];
+		dummy.removeChild(node);
+		if(node.nodeName === 'SCRIPT'){
+			var script = document.createElement('SCRIPT');
+			if(node.src)
+				script.src = node.src;
+			script.innerHTML = node.innerHTML;
+			parent.appendChild(script);
+		}
+		else
+			parent.appendChild(dummy.childNodes[0]);
+	}
 
-	setTimeout(function () {
-		iframe.contentDocument.write(code)
 
-
-	}, 0);
-	return iframe;
 }
 function createContentsView(){
 	function jumpContents(id) {

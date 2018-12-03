@@ -21,9 +21,10 @@ function outputScript($path,&$links,$type){
 		$name = explode(".", $file, 2);
 		if (count($name) === 2 && $name[1] === $type) {
 			$date = date ("YmdHis", filemtime("$path/$file"));
-			if($type === 'js')
+			if($type === 'js'){
+				$scripts .= "\t<link rel='preload' as='script' href='$path/$file?ver=$date'>\n";
 				$scripts .= "\t<script type='text/javascript' src='$path/$file?ver=$date'></script>\n";
-			else{
+			}else{
 				$scripts .= "\t<link rel='preload' as='style' href='$path/$file?ver=$date'>\n";
 				$scripts .= "\t<link rel='stylesheet' href='$path/$file?ver=$date'>\n";
 			}
