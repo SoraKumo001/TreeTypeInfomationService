@@ -158,10 +158,10 @@ function createContensView(mainView){
 	separate.addSeparateChild(1, contentsMain, "client");
 
 	//広告領域
-	var adArea = GUI.createWindow();
-	adArea.setHeight(300);
-	separate.addSeparateChild(0, adArea, "bottom");
-	System.adArea = adArea;
+	// var adArea = GUI.createWindow();
+	// adArea.setHeight(300);
+	// separate.addSeparateChild(0, adArea, "bottom");
+	// System.adArea = adArea;
 
 	var treeView = GUI.createTreeView();
 	separate.getChild(0).getClient().style.backgroundColor = 'transparent';

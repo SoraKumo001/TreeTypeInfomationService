@@ -198,11 +198,11 @@ function createContentsView(){
 				createAdsenseNode(page, "BOTTOM");	//ボトム広告の挿入
 
 			//サイドバー
-			var client = System.adArea.getClient()
-			// while (client.childNodes.length)
-			// 	client.removeChild(client.childNodes[0])
-			if (client.childNodes.length === 0)
-				createAdsenseNode3(System.adArea.getClient(),"SIDE");
+			// var client = System.adArea.getClient()
+			// // while (client.childNodes.length)
+			// // 	client.removeChild(client.childNodes[0])
+			// if (client.childNodes.length === 0)
+			// 	createAdsenseNode3(System.adArea.getClient(),"SIDE");
 
 			jumpContents(id);
 
