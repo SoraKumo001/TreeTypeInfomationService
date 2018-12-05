@@ -21,7 +21,7 @@ class Session{
 		return Self::JS_requestSession();
 	}
 	public static function isLocalAdmin($id=null,$pass=null){
-		if($id == null)
+		if($id === null)
 			return MG::LDB()->get("select 1 from users limit 1") == 1;
 		$p =  MG::LDB()->get("select users_password from users where users_name=?",$id);
 		if($p === null)
