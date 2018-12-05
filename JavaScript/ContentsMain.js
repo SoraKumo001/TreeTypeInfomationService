@@ -20,6 +20,41 @@ function scrollTo(node,pos){
 
 	},10);
 }
+
+//outputAd(広告を挿入するノード,広告コード)
+function outputAd(node, code,flag) {
+	//document.writeのフック
+	if (flag){
+		var documentWrite = document.write;
+		document.write = function (value) {
+			var t = this;
+			node.innerHTML = value;
+			document.write = documentWrite;
+		}
+	}
+	//ノード内のデータを削除
+	 while (node.childNodes.length)
+	 	node.removeChild(node.childNodes[0])
+	//広告コードをダミーノードに設定
+	var dummy = document.createElement('div');
+	dummy.innerHTML = code;
+	while (dummy.childNodes.length) {
+		var child = dummy.childNodes[0];
+		dummy.removeChild(child);
+		if (child.nodeName === 'SCRIPT') {
+			//スクリプトなら再生成
+			var script = document.createElement('SCRIPT');
+			 if (child.src)
+			 	script.src = child.src;
+			script.async = child.async;
+			script.innerHTML = child.innerHTML;
+
+			node.appendChild(script);
+		}
+		else
+			node.appendChild(child);
+	}
+}
 function createAdsenseNode(parent,pos){
 	var code;
 	if (!System.adsense)
@@ -36,29 +71,17 @@ function createAdsenseNode(parent,pos){
 	if(!code)
 		return null;
 
-	//サイズ調整
-	var div = document.createElement('div');
-	div.style.boxSizing = 'border-box';
-	div.style.overflow = 'hidden'
-	if(pos == 'TOP')
-		parent.insertBefore(div,parent.firstChild);
+	var adArea = document.createElement('div');
+	if (pos == 'TOP')
+		parent.insertBefore(adArea, parent.firstChild);
 	else
-		parent.appendChild(div);
-	div.innerHTML = code;
-/*
-	//広告コードの挿入
-	var dummy = document.createElement('div');
-	dummy.innerHTML = code;
-	for(var i=0;i<dummy.childNodes.length;i++){
-		div.appendChild(dummy.childNodes[0]);
-	}
-*/
-	setTimeout(function(){
-		try {
-			(adsbygoogle = window.adsbygoogle || []).push({});
-		} catch (e) { }
-	},10);
-	return div;
+		parent.appendChild(adArea);
+	outputAd(adArea,code);
+	// setTimeout(function(){
+	// 	try {
+	// 		(adsbygoogle = window.adsbygoogle || []).push({});
+	// 	} catch (e) { }
+	// },10);
 }
 function createAdsenseNode2(parent, pos) {
 	var code;
@@ -76,24 +99,12 @@ function createAdsenseNode2(parent, pos) {
 	if (!code)
 		return null;
 
-	//サイズ調整
-	var iframe = document.createElement('iframe');
-	iframe.style.border = 'none'
-	iframe.style.width = '100%'
-	iframe.style.height = '210px'
-	iframe.style.paddingLeft = '8%';
-	iframe.style.paddingRight = '8%';
-	if(pos == 'TOP')
-		parent.insertBefore(iframe,parent.firstChild);
+	var adArea = document.createElement('div');
+	if (pos == 'TOP')
+		parent.insertBefore(adArea, parent.firstChild);
 	else
-		parent.appendChild(iframe);
-
-	setTimeout(function(){
-		iframe.contentDocument.write(code)
-
-
-	},0);
-	return iframe;
+		parent.appendChild(adArea);
+	outputAd(adArea, code, true);
 }
 function createAdsenseNode3(parent, pos) {
 	var code;
@@ -111,30 +122,12 @@ function createAdsenseNode3(parent, pos) {
 	if (!code)
 		return null;
 
-	//document.writeのフック
-	var documentWrite = document.write;
-	document.write = function(value){
-		var div = document.createElement('div');
-		div.innerHTML = value;
-		parent.appendChild(div);
-		document.write = documentWrite;
-	}
-	//広告コードの挿入
-	var dummy = document.createElement('div');
-	dummy.innerHTML = code;
-	while(dummy.childNodes.length){
-		let node =  dummy.childNodes[0];
-		dummy.removeChild(node);
-		if(node.nodeName === 'SCRIPT'){
-			var script = document.createElement('SCRIPT');
-			if(node.src)
-				script.src = node.src;
-			script.innerHTML = node.innerHTML;
-			parent.appendChild(script);
-		}
-		else
-			parent.appendChild(dummy.childNodes[0]);
-	}
+	var adArea = document.createElement('div');
+	if (pos == 'TOP')
+		parent.insertBefore(adArea, parent.firstChild);
+	else
+		parent.appendChild(adArea);
+	outputAd(adArea, code,true);
 
 
 }
@@ -181,7 +174,7 @@ function createContentsView(){
 				var c = contentsChilds[i];
 				height += c.offsetHeight;
 				allHeight +=  c.offsetHeight;
-				if(height > 900){
+				if(height > 1000){
 					if(count++ == 0)
 						createAdsenseNode2(c, "INNER");
 					else
@@ -194,7 +187,7 @@ function createContentsView(){
 			if(allHeight > 300)
 				createAdsenseNode(page,"TOP");	//トップ広告の挿入
 
-			if (length > 900)
+			if (height > 500)
 				createAdsenseNode(page, "BOTTOM");	//ボトム広告の挿入
 
 			//サイドバー
