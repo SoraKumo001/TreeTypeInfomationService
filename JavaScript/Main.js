@@ -66,10 +66,12 @@ function onStart(){
 	GUI.rootWindow.removeChildAll();
 
 	ADP.exec("Params.getParams", [
+		"base_url",
 		"base_adsense", "base_adsenseTop", "base_adsenseBottom", "base_adsenseInner",
 		"base_rakutenTop", "base_rakutenBottom","base_rakutenInner",
 		"base_amazonTop", "base_amazonBottom", "base_amazonInner", "base_amazonSide"]).on =
 		function(value){
+			System.baseUrl = value["base_url"]
 			System.adsense = {
 				base: value["base_adsense"],
 				top: value["base_adsenseTop"],

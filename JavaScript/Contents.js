@@ -176,8 +176,22 @@ function createContensView(mainView){
 		if(p != id){
 			//URLの書き換え
 			history.pushState(null, null, "?p=" + id);
+
 		}
+
+		if (System.baseUrl) {
+			var canonical = document.querySelector('link[rel=canonical]');
+			if (!canonical) {
+				canonical = document.createElement('link');
+				canonical.rel = 'canonical';
+				document.head.appendChild(canonical);
+			}
+			canonical.href = System.baseUrl + '?p=' + id;
+		}
+
 		var item = treeView.getSelectItem();
+		if(!item)
+			item = treeView.getRootItem();
 		//パンくずリスト生成
 		createBreadcrumb(item);
 		//親アイテムも含めて展開
