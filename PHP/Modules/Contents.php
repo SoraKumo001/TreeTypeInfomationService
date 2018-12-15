@@ -475,6 +475,46 @@ class Contents{
 		}
 		return $count;
 	}
+	public static function getBreadcrumb(){
+		$id = MG::getParam("p");
+		if ($id == null)
+			$id = 1;
+
+		//指定されたコンテンツの情報を取得
+		$contents = Self::JS_getContentsPage($id);
+		if ($contents === null)
+			return;
+
+		$parents[] = $contents;
+		$pid = $contents["pid"];
+		while (true) {
+			$value = MG::DB()->gets("select contents_id as id,contents_parent as pid,contents_title as title from contents where contents_id=?", $pid);
+			if (!$value)
+				break;
+			$pid = $value["pid"];
+			$parents[] = $value;
+		}
+		$breadcrumb = [
+			"@context" => "http://schema.org",
+			"@type" => "BreadcrumbList"
+		];
+
+		$list = [];
+		$i=1;
+		foreach (array_reverse($parents) as $parent) {
+			$list[] = [
+				"@type" => "ListItem",
+				"position" => $i++,
+				"item" =>
+					[
+					"@id" => "?p=".$parent["id"],
+					"name" => $parent["title"]
+				]
+			];
+		}
+		$breadcrumb["itemListElement"] = $list;
+		return sprintf('<script type="application/ld+json">%s</script>',json_encode($breadcrumb));
+	}
 	public static function outputPage(){
 		$id = MG::getParam("p");
 		if($id == null)

@@ -71,6 +71,8 @@ function outputFile($fileName){
 			"\t</script>\n",
 			$adsense);
 	}
+	//パンくずリスト
+	$scripts .= "\t".Contents::getBreadcrumb();
 
 	//圧縮
 	//ob_start("ob_gzhandler");

@@ -168,26 +168,22 @@ function createContentsView(){
 
 			var allHeight = 0;
 			var height = 0;
-			var count = 0;
 			//記事内広告の設定
 			for(var i=0;i<contentsChilds.length;i++){
 				var c = contentsChilds[i];
-				height += c.offsetHeight;
-				allHeight +=  c.offsetHeight;
-				if(height > 1000){
-					if(count++ == 0)
-						createAdsenseNode2(c, "INNER");
-					else
-						createAdsenseNode(c, "INNER");
+				if (height > 1000 && i !== contentsChilds.length-1){
+					createAdsenseNode(c, "INNER");
 					height = 0;
 				}
+				height += c.offsetHeight;
+				allHeight += c.offsetHeight;
 			}
 
 
 			if(allHeight > 300)
 				createAdsenseNode(page,"TOP");	//トップ広告の挿入
 
-			if (height > 500)
+			if (height > 1000)
 				createAdsenseNode(page, "BOTTOM");	//ボトム広告の挿入
 
 			//サイドバー
@@ -288,7 +284,15 @@ function createContents(value){
 	}
 	area.updateContents = function(value){
 		if (area.dataset.type === value["type"]){
+			var titleTag = 'H' + value["title_type"];
+			if (titleTag != title.nodeName){
+				var newTitle = document.createElement(titleTag);
+				title.parentNode.insertBefore(newTitle,title);
+				title.parentNode.removeChild(title);
+				title = newTitle;
+			}
 			area.dataset.stat = value["stat"];
+			title.nodeName = 'H' + value["title_type"];
 			title.className = "Title" + value["title_type"];
 			title.textContent = value["title"];
 			date.textContent = (new Date(value["date"])).toLocaleString();
