@@ -475,6 +475,39 @@ class Contents{
 		}
 		return $count;
 	}
+	public static function getTitle(){
+		$id = MG::getParam("p");
+		if ($id == null)
+			$id = 1;
+		//指定されたコンテンツの情報を取得
+		$contents = Self::JS_getContentsPage($id);
+		$pid = $contents["pid"];
+		while(true){
+			$value = MG::DB()->gets("select contents_id as id,contents_parent as pid,contents_title as title from contents where contents_id=?",$pid);
+			if(!$value)
+				break;
+			$pid = $value["pid"];
+			$parents[] = $value;
+		}
+
+		$title = htmlspecialchars(Params::getParam("Global_base_title", ""));
+		foreach (array_reverse($parents) as $parent){
+			$title = htmlspecialchars($parent["title"]) . " ～ " . $title;
+		}
+		return $title;
+	}
+	public static function getCanonical(){
+		$id = MG::getParam("p");
+		if ($id == null)
+			$id = 1;
+
+		//指定されたコンテンツの情報を取得
+		$contents = Self::JS_getContentsPage($id);
+		if ($contents === null)
+			return '';
+		$url = Params::getParam("Global_base_url", "");
+		return sprintf('<link rel="canonical" href="%s?p=%d"/>',$url,$id);
+	}
 	public static function getBreadcrumb(){
 		$id = MG::getParam("p");
 		if ($id == null)
@@ -483,7 +516,7 @@ class Contents{
 		//指定されたコンテンツの情報を取得
 		$contents = Self::JS_getContentsPage($id);
 		if ($contents === null)
-			return;
+			return '';
 
 		$parents[] = $contents;
 		$pid = $contents["pid"];

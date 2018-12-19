@@ -72,8 +72,10 @@ function outputFile($fileName){
 			$adsense);
 	}
 	//パンくずリスト
-	$scripts .= "\t".Contents::getBreadcrumb();
-
+	$scripts .= "\t".Contents::getBreadcrumb()."\n";
+	//正規URL
+	$scripts .= "\t" . Contents::getCanonical()."\n";
+	$title = Contents::getTitle();
 	//圧縮
 	//ob_start("ob_gzhandler");
 	// Last-modified と ETag 生成
@@ -83,7 +85,8 @@ function outputFile($fileName){
 	header( "Last-Modified: {$last_modified}" );
 	header( "Etag: {$etag}" );
 	$contents = file_get_contents($fileName);
-	echo str_replace("[[SCRIPTS]]",$scripts,$contents);
+	$contents = str_replace("[[SCRIPTS]]",$scripts,$contents);
+	echo str_replace("[[TITLE]]",$title,$contents);
 }
 
 $result = MG::init();
