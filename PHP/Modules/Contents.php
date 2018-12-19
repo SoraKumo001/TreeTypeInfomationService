@@ -482,6 +482,7 @@ class Contents{
 		//指定されたコンテンツの情報を取得
 		$contents = Self::JS_getContentsPage($id);
 		$pid = $contents["pid"];
+		$parents=[];
 		while(true){
 			$value = MG::DB()->gets("select contents_id as id,contents_parent as pid,contents_title as title from contents where contents_id=?",$pid);
 			if(!$value)
