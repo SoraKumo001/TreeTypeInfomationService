@@ -6,8 +6,8 @@ function isBot(){
 	$agent = $_SERVER['HTTP_USER_AGENT'];
 	if (stripos($agent, "Googlebot") !== false)
 		return false;
-	if (stripos($agent, "search") !== false)
-		return true;
+	//if (stripos($agent, "search") !== false)
+	//	return true;
 	if (stripos($agent, "bot") !== false)
 		return true;
 	if (stripos($agent, "facebookexternalhit") !== false)
