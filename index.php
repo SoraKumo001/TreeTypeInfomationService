@@ -4,10 +4,12 @@ require_once("PHP/Manager.php");
 function isBot(){
 	//return true;
 	$agent = $_SERVER['HTTP_USER_AGENT'];
-	//if (stripos($agent, "bot") !== false)
-	//	return true;
-	//if (stripos($agent, "search") !== false)
-	//	return true;
+	if (stripos($agent, "Googlebot") !== false)
+		return false;
+	if (stripos($agent, "search") !== false)
+		return true;
+	if (stripos($agent, "bot") !== false)
+		return true;
 	if (stripos($agent, "facebookexternalhit") !== false)
 		return true;
 	return false;
@@ -22,10 +24,8 @@ function outputScript($path,&$links,$type){
 		if (count($name) === 2 && $name[1] === $type) {
 			$date = date ("YmdHis", filemtime("$path/$file"));
 			if($type === 'js'){
-			//	$scripts .= "\t<link rel='preload' as='script' href='$path/$file?ver=$date'>\n";
 				$scripts .= "\t<script type='text/javascript' src='$path/$file?ver=$date'></script>\n";
 			}else{
-			//	$scripts .= "\t<link rel='preload' as='style' href='$path/$file?ver=$date'>\n";
 				$scripts .= "\t<link rel='stylesheet' href='$path/$file?ver=$date'>\n";
 			}
 			$links[] = "$path/$file?ver=$date";
