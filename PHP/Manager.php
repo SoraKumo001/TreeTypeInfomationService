@@ -206,7 +206,7 @@ class MG{
 	}
 	public static function isAuthority($authority){
 		$session = Self::getSession();
-		if($session == null)
+		if(!$session)
 			return false;
 		if($session["users_id"] == -1)
 			return true;

@@ -52,6 +52,8 @@ class Users{
 		$values = MG::DB()->queryData2("select user_group_name from user_group where user_group_id in ".
 			"(select user_group_id from user_group_bind where users_id = (select users_id from users where users_mail=?))",
 			$userId);
+		if(!$values)
+			return null;
 		$result = [];
 		foreach($values as $value)
 			$result[] = $value[0];

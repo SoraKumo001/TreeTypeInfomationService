@@ -85,7 +85,7 @@ class Database{
 	}
 	public function gets($sql,...$params){
 		$stmt =	$this->query($sql,...$params);
-		if($row=$stmt->fetch(PDO::FETCH_ASSOC))
+		if($stmt && $row=$stmt->fetch(PDO::FETCH_ASSOC))
 			return $row;
 		return null;
 	}

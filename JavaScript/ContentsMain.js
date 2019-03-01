@@ -77,11 +77,11 @@ function createAdsenseNode(parent,pos){
 	else
 		parent.appendChild(adArea);
 	outputAd(adArea,code);
-	// setTimeout(function(){
-	// 	try {
-	// 		(adsbygoogle = window.adsbygoogle || []).push({});
-	// 	} catch (e) { }
-	// },10);
+	setTimeout(function(){
+		try {
+			(adsbygoogle = window.adsbygoogle || []).push({});
+		} catch (e) { }
+	},10);
 }
 function createAdsenseNode2(parent, pos) {
 	var code;
@@ -172,7 +172,7 @@ function createContentsView(){
 			for(var i=0;i<contentsChilds.length;i++){
 				var c = contentsChilds[i];
 				if (height > 1000 && i !== contentsChilds.length-1){
-					createAdsenseNode(c, "INNER");
+					//createAdsenseNode(c, "INNER");
 					height = 0;
 				}
 				height += c.offsetHeight;
